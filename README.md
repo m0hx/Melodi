@@ -1,4 +1,4 @@
-# Melodi
+# Melodi Instruments
 Music Instruments Shop
 
 # ERD
