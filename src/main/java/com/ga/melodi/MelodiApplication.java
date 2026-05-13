@@ -8,6 +8,7 @@ public class MelodiApplication {
 
 	public static void main(String[] args) {
 		System.out.println("MelodiApplication started!");
+		System.out.println("test!");
 		SpringApplication.run(MelodiApplication.class, args);
 	}
 
