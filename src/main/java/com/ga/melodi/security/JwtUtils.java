@@ -15,16 +15,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JwtUtils {
+public class JWTUtils {
 
-	private static final Logger log = LoggerFactory.getLogger(JwtUtils.class);
+	private static final Logger log = LoggerFactory.getLogger(JWTUtils.class);
 
 	private final SecretKey key;
 	private final int jwtExpirationMs;
 
-	public JwtUtils(
-			@Value("${jwt-secret}") String rawSecret,
-			@Value("${jwt-expiration-ms:86400000}") int jwtExpirationMs) {
+	public JWTUtils(
+			@Value("${jwt-secret}")
+			String rawSecret,
+			@Value("${jwt-expiration-ms:86400000}")
+			int jwtExpirationMs) {
 		String secret = rawSecret.replace("\"", "").trim();
 		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 		this.jwtExpirationMs = jwtExpirationMs;
