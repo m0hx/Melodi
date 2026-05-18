@@ -11,4 +11,6 @@ public interface InstrumentRepository extends JpaRepository<Instrument, Long> {
 	List<Instrument> findByCategory_Id(Long categoryId);
 
 	List<Instrument> findByBrand_Id(Long brandId);
+
+	long countByCategory_Id(Long categoryId);
 }
