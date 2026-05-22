@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Melodi — verify email</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+<h2>Welcome to Melodi Instruments</h2>
+<p>Hi <span th:text="${fullName}">there</span>,</p>
+<p>Please confirm your account:</p>
+<p><a th:href="${verificationURL}" style="background:#2563eb;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px;">Verify email</a></p>
+<p>Or copy this link:</p>
+<p th:text="${verificationURL}"></p>
+</body>
+</html>

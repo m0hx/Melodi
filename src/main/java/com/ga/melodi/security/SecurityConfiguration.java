@@ -39,9 +39,8 @@ public class SecurityConfiguration {
 								"/login",
 								"/auth/users/register",
 								"/auth/users/login",
-								"/auth/users/verify-email",
-								"/auth/users/forgot-password",
-								"/auth/users/reset-password",
+								"/auth/users/register/verify",
+								"/auth/users/resetPassword",
 								"/error")
 						.permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/instruments", "/api/instruments/**")
