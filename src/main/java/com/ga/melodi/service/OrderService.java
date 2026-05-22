@@ -36,6 +36,7 @@ public class OrderService {
 	private final CartItemRepository cartItemRepository;
 	private final InstrumentRepository instrumentRepository;
 	private final CurrentUserService currentUserService;
+	private final RentalService rentalService;
 
 	public record OrderDetailResponse(Order order, List<OrderItem> items, Payment payment) {}
 
@@ -157,6 +158,8 @@ public class OrderService {
 		orderRepository.save(order);
 
 		cartItemRepository.deleteByUser_Id(user.getId());
+
+		rentalService.createRentalsForConfirmedOrder(order, items);
 
 		return new OrderDetailResponse(order, items, payment);
 	}
