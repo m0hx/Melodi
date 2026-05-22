@@ -13,7 +13,8 @@ https://trello.com/b/G4XJpa2c/project-4-jdb-melodi
 # Backend / Spring Boot Dependencies
 
 - **SDK: Java Oracle OpenJDK (17.0.17)**
-- **Spring Boot 4.0.6**
+- **Maven**
+- **Spring Boot: 4.0.6**
 - **Spring Web**
 - **Spring Data JPA**
 - **PostgreSQL Driver**
