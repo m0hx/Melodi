@@ -63,6 +63,14 @@ function formatDate(iso: string) {
   }
 }
 
+function normalizeStatus(status?: string | null) {
+  return status?.toUpperCase() ?? ''
+}
+
+function isCartAllowed(status?: string | null) {
+  return normalizeStatus(status) === 'AVAILABLE'
+}
+
 export function InstrumentDetailPage() {
   const { token } = useAuth()
   const { instrumentId: idParam } = useParams<{ instrumentId: string }>()
@@ -80,6 +88,10 @@ export function InstrumentDetailPage() {
   const [cartMsg, setCartMsg] = useState<string | null>(null)
   const [cartErr, setCartErr] = useState<string | null>(null)
   const [addingCart, setAddingCart] = useState(false)
+
+  const [wishlistMsg, setWishlistMsg] = useState<string | null>(null)
+  const [wishlistErr, setWishlistErr] = useState<string | null>(null)
+  const [addingWishlist, setAddingWishlist] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -143,6 +155,21 @@ export function InstrumentDetailPage() {
     }
   }
 
+  async function addToWishlist() {
+    if (!token) return
+    setWishlistErr(null)
+    setWishlistMsg(null)
+    setAddingWishlist(true)
+    try {
+      await postJson('/api/wishlist/items', { instrumentId }, { token })
+      setWishlistMsg('Saved to wishlist.')
+    } catch (err) {
+      setWishlistErr(err instanceof Error ? err.message : 'Could not save to wishlist')
+    } finally {
+      setAddingWishlist(false)
+    }
+  }
+
   if (loading) {
     return (
       <Card className="ui-surface">
@@ -170,6 +197,9 @@ export function InstrumentDetailPage() {
     )
   }
 
+  const status = normalizeStatus(instrument.status)
+  const cartAllowed = isCartAllowed(instrument.status)
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -195,6 +225,11 @@ export function InstrumentDetailPage() {
             {instrument.purchaseStock} available to buy · {instrument.rentalStock} available to rent
           </p>
           <p className="text-xs text-muted-foreground">Status: {instrument.status ?? 'N/A'}</p>
+          {!cartAllowed ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Not available to buy or rent right now. Save it to your wishlist and check back later.
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -210,6 +245,10 @@ export function InstrumentDetailPage() {
                 Sign in to add to cart
               </Link>
             </Button>
+          ) : !cartAllowed ? (
+            <p className="text-sm text-muted-foreground">
+              This instrument is {status.toLowerCase()}. You can save it to your wishlist below.
+            </p>
           ) : (
             <>
               <div className="flex flex-wrap gap-2">
@@ -282,6 +321,53 @@ export function InstrumentDetailPage() {
                 </Button>
                 <Button variant="outline" asChild>
                   <Link to="/cart">Go to cart</Link>
+                </Button>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="ui-surface">
+        <CardHeader>
+          <CardTitle className="text-base">Wishlist</CardTitle>
+          <CardDescription>
+            Save this instrument for later — including discontinued or temporarily unavailable items.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!token ? (
+            <Button asChild variant="outline">
+              <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
+                Sign in to save
+              </Link>
+            </Button>
+          ) : (
+            <>
+              {wishlistErr ? (
+                <p className="text-sm text-destructive" role="alert">
+                  {wishlistErr}
+                </p>
+              ) : null}
+              {wishlistMsg ? (
+                <p className="text-sm text-foreground" role="status">
+                  {wishlistMsg}{' '}
+                  <Link to="/wishlist" className="text-primary underline-offset-4 hover:underline">
+                    View wishlist
+                  </Link>
+                </p>
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={addingWishlist}
+                  onClick={() => void addToWishlist()}
+                >
+                  {addingWishlist ? 'Saving…' : 'Save to wishlist'}
+                </Button>
+                <Button variant="ghost" asChild>
+                  <Link to="/wishlist">Go to wishlist</Link>
                 </Button>
               </div>
             </>

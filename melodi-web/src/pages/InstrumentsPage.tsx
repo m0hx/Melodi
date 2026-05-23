@@ -67,8 +67,9 @@ export function InstrumentsPage() {
   }, [])
 
   const filtered = useMemo(() => {
-    if (selectedCategoryId === 'all') return instruments
-    return instruments.filter((i) => i.category?.id === selectedCategoryId)
+    const visible = instruments.filter((i) => i.status?.toUpperCase() !== 'HIDDEN')
+    if (selectedCategoryId === 'all') return visible
+    return visible.filter((i) => i.category?.id === selectedCategoryId)
   }, [instruments, selectedCategoryId])
 
   return (

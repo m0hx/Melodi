@@ -23,7 +23,14 @@ public class WishlistService {
 
 	public List<WishlistItem> getWishlist() {
 		User user = currentUserService.getCurrentUser();
-		return wishlistItemRepository.findByUser_IdOrderByIdAsc(user.getId());
+		List<WishlistItem> items = wishlistItemRepository.findByUser_IdOrderByIdAsc(user.getId());
+		if (currentUserService.isCurrentUserAdmin()) {
+			return items;
+		}
+		return items.stream()
+				.filter(item -> item.getInstrument() != null
+						&& !"HIDDEN".equalsIgnoreCase(item.getInstrument().getStatus()))
+				.toList();
 	}
 
 	public WishlistItem addItem(AddWishlistItemRequest request) {
@@ -37,9 +44,8 @@ public class WishlistService {
 		Instrument instrument = instrumentRepository
 				.findById(request.getInstrumentId())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found"));
-		if (!"AVAILABLE".equalsIgnoreCase(instrument.getStatus())) {
-			throw new ResponseStatusException(
-					HttpStatus.BAD_REQUEST, "Instrument is not available for wishlist: " + instrument.getStatus());
+		if ("HIDDEN".equalsIgnoreCase(instrument.getStatus())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Instrument cannot be added to wishlist");
 		}
 		WishlistItem item = new WishlistItem();
 		item.setUser(user);
