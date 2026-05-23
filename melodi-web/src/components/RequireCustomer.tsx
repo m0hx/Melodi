@@ -5,7 +5,8 @@ import { useAuth } from '../auth/AuthContext.tsx'
 
 type Profile = { role?: { name: string } }
 
-export function RequireAdmin({ children }: { children: ReactNode }) {
+/** Shop routes (cart, orders, etc.) — admins are redirected to /admin. */
+export function RequireCustomer({ children }: { children: ReactNode }) {
   const { token } = useAuth()
   const location = useLocation()
   const [loading, setLoading] = useState(true)
@@ -44,8 +45,8 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
     return <p className="text-sm text-muted-foreground">Checking access…</p>
   }
 
-  if (!isAdmin) {
-    return <Navigate to="/instruments" replace />
+  if (isAdmin) {
+    return <Navigate to="/admin" replace />
   }
 
   return children

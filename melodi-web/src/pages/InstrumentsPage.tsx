@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getJson } from '../api/client.ts'
+import { getJson, instrumentImageUrl } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -23,6 +23,7 @@ type Instrument = {
   rentalStock: number
   condition?: string | null
   status?: string | null
+  imageName?: string | null
   category?: Category | null
   brand?: Brand | null
 }
@@ -141,7 +142,18 @@ export function InstrumentsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((item) => (
-            <Card key={item.id} className="ui-surface flex flex-col">
+            <Card key={item.id} className="ui-surface flex flex-col overflow-hidden">
+              {item.imageName ? (
+                <img
+                  src={instrumentImageUrl(item.id)}
+                  alt=""
+                  className="aspect-[4/3] w-full border-b border-border/60 object-cover"
+                />
+              ) : (
+                <div className="flex aspect-[4/3] w-full items-center justify-center border-b border-border/60 bg-muted/20 text-xs text-muted-foreground">
+                  No image
+                </div>
+              )}
               <CardHeader className="space-y-1">
                 <CardTitle className="text-lg leading-snug">{item.name}</CardTitle>
                 <CardDescription>

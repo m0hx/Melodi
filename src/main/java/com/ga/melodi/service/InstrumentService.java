@@ -7,10 +7,12 @@ import com.ga.melodi.repository.BrandRepository;
 import com.ga.melodi.repository.CategoryRepository;
 import com.ga.melodi.repository.InstrumentRepository;
 import com.ga.melodi.repository.OrderItemRepository;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -81,6 +83,43 @@ public class InstrumentService {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete instrument that has order history");
 		}
 		instrumentRepository.deleteById(instrumentId);
+	}
+
+	public Instrument updateInstrumentImage(Long instrumentId, MultipartFile image) throws IOException {
+		Instrument instrument = getInstrumentById(instrumentId);
+		validateImage(image);
+		instrument.setImageName(image.getOriginalFilename());
+		instrument.setImageType(image.getContentType());
+		instrument.setImageData(image.getBytes());
+		return instrumentRepository.save(instrument);
+	}
+
+	public Instrument getInstrumentForImage(Long instrumentId) {
+		Instrument instrument = instrumentRepository
+				.findById(instrumentId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found with id: " + instrumentId));
+		if (isHidden(instrument) && !currentUserService.isCurrentUserAdmin()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found with id: " + instrumentId);
+		}
+		return instrument;
+	}
+
+	public Instrument removeInstrumentImage(Long instrumentId) {
+		Instrument instrument = getInstrumentById(instrumentId);
+		instrument.setImageName(null);
+		instrument.setImageType(null);
+		instrument.setImageData(null);
+		return instrumentRepository.save(instrument);
+	}
+
+	private static void validateImage(MultipartFile image) {
+		if (image == null || image.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file is required");
+		}
+		String contentType = image.getContentType();
+		if (contentType == null || !contentType.startsWith("image/")) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must be an image");
+		}
 	}
 
 	private Category resolveCategory(Long categoryId) {

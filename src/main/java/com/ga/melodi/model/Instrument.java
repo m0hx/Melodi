@@ -1,5 +1,6 @@
 package com.ga.melodi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -57,4 +58,11 @@ public class Instrument {
 
 	@Column(nullable = false, length = 30)
 	private String status = "AVAILABLE";
+
+	private String imageName;
+	private String imageType;
+
+	@JsonIgnore
+	@Column(name = "image_data", columnDefinition = "BYTEA")
+	private byte[] imageData;
 }

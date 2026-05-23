@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
-import { getJson, postJson } from '../api/client.ts'
+import { Link, useParams } from 'react-router-dom'
+import { getJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,7 +19,7 @@ type Order = {
   totalAmount: number
   trackingId?: string | null
   createdAt: string
-  user?: { id: number; fullName: string; email: string } | null
+  user?: { fullName: string; email: string } | null
 }
 
 type OrderItem = {
@@ -27,7 +27,6 @@ type OrderItem = {
   mode: string
   quantity: number
   unitPrice: number
-  rentalDays?: number | null
   instrument: { id: number; name: string }
 }
 
@@ -43,8 +42,6 @@ type OrderDetail = {
   payment: Payment | null
 }
 
-type LocationState = { message?: string }
-
 function formatMoney(value: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 }
@@ -57,24 +54,21 @@ function formatDate(iso: string) {
   }
 }
 
-export function OrderDetailPage() {
+export function AdminOrderDetailPage() {
   const { token } = useAuth()
   const { orderId: idParam } = useParams<{ orderId: string }>()
-  const location = useLocation()
-  const flash = (location.state as LocationState | null)?.message
   const orderId = idParam != null ? Number(idParam) : NaN
 
   const [detail, setDetail] = useState<OrderDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [cancelling, setCancelling] = useState(false)
 
   const load = useCallback(async () => {
     if (!token || Number.isNaN(orderId)) return
     setLoading(true)
     setError(null)
     try {
-      const data = await getJson<OrderDetail>(`/api/orders/${orderId}`, { token })
+      const data = await getJson<OrderDetail>(`/api/admin/orders/${orderId}`, { token })
       setDetail(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load order')
@@ -86,20 +80,6 @@ export function OrderDetailPage() {
   useEffect(() => {
     void load()
   }, [load])
-
-  async function cancelOrder() {
-    if (!token || Number.isNaN(orderId)) return
-    setCancelling(true)
-    setError(null)
-    try {
-      await postJson(`/api/orders/${orderId}/cancel`, {}, { token })
-      await load()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Cancel failed')
-    } finally {
-      setCancelling(false)
-    }
-  }
 
   if (Number.isNaN(orderId) || orderId < 1) {
     return <p className="text-sm text-destructive">Invalid order link.</p>
@@ -118,7 +98,7 @@ export function OrderDetailPage() {
         </CardHeader>
         <CardContent>
           <Button variant="outline" asChild>
-            <Link to="/orders">Back to orders</Link>
+            <Link to="/admin/orders">Back to all orders</Link>
           </Button>
         </CardContent>
       </Card>
@@ -132,29 +112,19 @@ export function OrderDetailPage() {
   return (
     <div className="space-y-6">
       <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
-        <Link to="/orders">← Back to orders</Link>
+        <Link to="/admin/orders">← Back to all orders</Link>
       </Button>
-
-      {flash ? (
-        <p
-          className="rounded-lg border border-border/60 bg-muted/40 px-4 py-3 text-sm text-foreground"
-          role="status"
-        >
-          {flash}
-        </p>
-      ) : null}
-
-      {error ? (
-        <p className="text-sm text-destructive" role="alert">
-          {error}
-        </p>
-      ) : null}
 
       <div className="space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">{order.orderNumber}</h1>
         <p className="text-sm text-muted-foreground">
           {formatDate(order.createdAt)} · {order.orderType} · {order.status}
         </p>
+        {order.user ? (
+          <p className="text-sm text-muted-foreground">
+            Customer: {order.user.fullName} ({order.user.email})
+          </p>
+        ) : null}
         {order.trackingId ? (
           <p className="text-sm text-muted-foreground">Tracking: {order.trackingId}</p>
         ) : null}
@@ -196,21 +166,6 @@ export function OrderDetailPage() {
           </CardHeader>
         </Card>
       ) : null}
-
-      <div className="flex flex-wrap gap-2">
-        {order.status === 'PENDING_PAYMENT' ? (
-          <>
-            <Button asChild>
-              <Link to="/checkout" state={{ orderId: order.id }}>
-                Pay now
-              </Link>
-            </Button>
-            <Button variant="outline" disabled={cancelling} onClick={() => void cancelOrder()}>
-              {cancelling ? 'Cancelling…' : 'Cancel order'}
-            </Button>
-          </>
-        ) : null}
-      </div>
     </div>
   )
 }

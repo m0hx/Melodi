@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getJson, postJson } from '../api/client.ts'
+import { deleteJson, getJson, instrumentImageUrl, postJson, putImage } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
 import {
@@ -31,6 +31,7 @@ type Instrument = {
   rentalStock: number
   condition?: string | null
   status?: string | null
+  imageName?: string | null
   category?: Category | null
   brand?: Brand | null
 }
@@ -92,6 +93,32 @@ export function InstrumentDetailPage() {
   const [wishlistMsg, setWishlistMsg] = useState<string | null>(null)
   const [wishlistErr, setWishlistErr] = useState<string | null>(null)
   const [addingWishlist, setAddingWishlist] = useState(false)
+
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [imageVersion, setImageVersion] = useState(0)
+  const [imageMsg, setImageMsg] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [removingImage, setRemovingImage] = useState(false)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    if (!token) {
+      setIsAdmin(false)
+      return
+    }
+    ;(async () => {
+      try {
+        const profile = await getJson<{ role?: { name: string } }>('/api/profile', { token })
+        if (!cancelled) setIsAdmin(profile.role?.name === 'ADMIN')
+      } catch {
+        if (!cancelled) setIsAdmin(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [token])
 
   useEffect(() => {
     let cancelled = false
@@ -170,6 +197,44 @@ export function InstrumentDetailPage() {
     }
   }
 
+  async function reloadInstrument() {
+    const data = await getJson<Instrument>(`/api/instruments/${instrumentId}`)
+    setInstrument(data)
+  }
+
+  async function onUploadInstrumentImage(file: File) {
+    if (!token) return
+    setUploadingImage(true)
+    setImageMsg(null)
+    try {
+      const msg = await putImage(`/api/instruments/${instrumentId}/image`, file, { token })
+      setImageMsg(msg)
+      setImageVersion(Date.now())
+      await reloadInstrument()
+    } catch (err) {
+      setImageMsg(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploadingImage(false)
+      if (imageInputRef.current) imageInputRef.current.value = ''
+    }
+  }
+
+  async function onRemoveInstrumentImage() {
+    if (!token) return
+    setRemovingImage(true)
+    setImageMsg(null)
+    try {
+      await deleteJson<string>(`/api/instruments/${instrumentId}/image`, { token })
+      setImageMsg('Instrument image removed.')
+      setImageVersion(Date.now())
+      await reloadInstrument()
+    } catch (err) {
+      setImageMsg(err instanceof Error ? err.message : 'Remove failed')
+    } finally {
+      setRemovingImage(false)
+    }
+  }
+
   if (loading) {
     return (
       <Card className="ui-surface">
@@ -202,6 +267,58 @@ export function InstrumentDetailPage() {
 
   return (
     <div className="space-y-8">
+      {instrument.imageName ? (
+        <img
+          src={instrumentImageUrl(instrument.id, imageVersion)}
+          alt=""
+          className="max-h-80 w-full rounded-xl border border-border/60 object-cover"
+        />
+      ) : (
+        <div className="flex max-h-48 min-h-40 w-full items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 text-sm text-muted-foreground">
+          No product image
+        </div>
+      )}
+
+      {isAdmin ? (
+        <Card className="ui-surface">
+          <CardHeader>
+            <CardTitle className="text-base">Product image (admin)</CardTitle>
+            <CardDescription>Upload or replace the catalog photo for this instrument.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) void onUploadInstrumentImage(file)
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              disabled={uploadingImage}
+              onClick={() => imageInputRef.current?.click()}
+            >
+              {uploadingImage ? 'Uploading…' : instrument.imageName ? 'Change image' : 'Upload image'}
+            </Button>
+            {instrument.imageName ? (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={removingImage}
+                onClick={() => void onRemoveInstrumentImage()}
+              >
+                {removingImage ? 'Removing…' : 'Remove image'}
+              </Button>
+            ) : null}
+            {imageMsg ? <p className="w-full text-sm text-muted-foreground">{imageMsg}</p> : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
@@ -233,147 +350,152 @@ export function InstrumentDetailPage() {
         </div>
       </div>
 
-      <Card className="ui-surface">
-        <CardHeader>
-          <CardTitle className="text-base">Add to cart</CardTitle>
-          <CardDescription>Sign in required to save items in your cart.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {!token ? (
-            <Button asChild>
-              <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
-                Sign in to add to cart
-              </Link>
-            </Button>
-          ) : !cartAllowed ? (
-            <p className="text-sm text-muted-foreground">
-              This instrument is {status.toLowerCase()}. You can save it to your wishlist below.
-            </p>
-          ) : (
-            <>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={cartMode === 'BUY' ? 'default' : 'outline'}
-                  onClick={() => setCartMode('BUY')}
-                >
-                  Buy
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={cartMode === 'RENT' ? 'default' : 'outline'}
-                  onClick={() => setCartMode('RENT')}
-                >
-                  Rent
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cart-qty">Quantity</Label>
-                <Input
-                  id="cart-qty"
-                  type="number"
-                  min={1}
-                  className="w-24"
-                  value={cartQty}
-                  onChange={(e) => setCartQty(Math.max(1, Number(e.target.value) || 1))}
-                />
-              </div>
-              {cartMode === 'RENT' ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="rent-start">Start date</Label>
-                    <Input
-                      id="rent-start"
-                      type="date"
-                      value={rentStart}
-                      onChange={(e) => setRentStart(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="rent-end">End date</Label>
-                    <Input
-                      id="rent-end"
-                      type="date"
-                      value={rentEnd}
-                      onChange={(e) => setRentEnd(e.target.value)}
-                    />
-                  </div>
+      {!isAdmin ? (
+        <Card className="ui-surface">
+          <CardHeader>
+            <CardTitle className="text-base">Add to cart</CardTitle>
+            <CardDescription>Sign in required to save items in your cart.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!token ? (
+              <Button asChild>
+                <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
+                  Sign in to add to cart
+                </Link>
+              </Button>
+            ) : !cartAllowed ? (
+              <p className="text-sm text-muted-foreground">
+                This instrument is {status.toLowerCase()}. You can save it to your wishlist below.
+              </p>
+            ) : (
+              <>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={cartMode === 'BUY' ? 'default' : 'outline'}
+                    onClick={() => setCartMode('BUY')}
+                  >
+                    Buy
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={cartMode === 'RENT' ? 'default' : 'outline'}
+                    onClick={() => setCartMode('RENT')}
+                  >
+                    Rent
+                  </Button>
                 </div>
-              ) : null}
-              {cartErr ? (
-                <p className="text-sm text-destructive" role="alert">
-                  {cartErr}
-                </p>
-              ) : null}
-              {cartMsg ? (
-                <p className="text-sm text-foreground" role="status">
-                  {cartMsg}{' '}
-                  <Link to="/cart" className="text-primary underline-offset-4 hover:underline">
-                    View cart
-                  </Link>
-                </p>
-              ) : null}
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" disabled={addingCart} onClick={() => void addToCart()}>
-                  {addingCart ? 'Adding…' : 'Add to cart'}
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to="/cart">Go to cart</Link>
-                </Button>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                <div className="space-y-2">
+                  <Label htmlFor="cart-qty">Quantity</Label>
+                  <Input
+                    id="cart-qty"
+                    type="number"
+                    min={1}
+                    className="w-24"
+                    value={cartQty}
+                    onChange={(e) => setCartQty(Math.max(1, Number(e.target.value) || 1))}
+                  />
+                </div>
+                {cartMode === 'RENT' ? (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="rent-start">Start date</Label>
+                      <Input
+                        id="rent-start"
+                        type="date"
+                        value={rentStart}
+                        onChange={(e) => setRentStart(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rent-end">End date</Label>
+                      <Input
+                        id="rent-end"
+                        type="date"
+                        value={rentEnd}
+                        onChange={(e) => setRentEnd(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+                {cartErr ? (
+                  <p className="text-sm text-destructive" role="alert">
+                    {cartErr}
+                  </p>
+                ) : null}
+                {cartMsg ? (
+                  <p className="text-sm text-foreground" role="status">
+                    {cartMsg}{' '}
+                    <Link to="/cart" className="text-primary underline-offset-4 hover:underline">
+                      View cart
+                    </Link>
+                  </p>
+                ) : null}
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" disabled={addingCart} onClick={() => void addToCart()}>
+                    {addingCart ? 'Adding…' : 'Add to cart'}
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/cart">Go to cart</Link>
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
-      <Card className="ui-surface">
-        <CardHeader>
-          <CardTitle className="text-base">Wishlist</CardTitle>
-          <CardDescription>
-            Save this instrument for later — including discontinued or temporarily unavailable items.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {!token ? (
-            <Button asChild variant="outline">
-              <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
-                Sign in to save
-              </Link>
-            </Button>
-          ) : (
-            <>
-              {wishlistErr ? (
-                <p className="text-sm text-destructive" role="alert">
-                  {wishlistErr}
-                </p>
-              ) : null}
-              {wishlistMsg ? (
-                <p className="text-sm text-foreground" role="status">
-                  {wishlistMsg}{' '}
-                  <Link to="/wishlist" className="text-primary underline-offset-4 hover:underline">
-                    View wishlist
-                  </Link>
-                </p>
-              ) : null}
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={addingWishlist}
-                  onClick={() => void addToWishlist()}
-                >
-                  {addingWishlist ? 'Saving…' : 'Save to wishlist'}
-                </Button>
-                <Button variant="ghost" asChild>
-                  <Link to="/wishlist">Go to wishlist</Link>
-                </Button>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      {!isAdmin ? (
+        <Card className="ui-surface">
+          <CardHeader>
+            <CardTitle className="text-base">Wishlist</CardTitle>
+            <CardDescription>
+              Save this instrument for later — including discontinued or temporarily unavailable
+              items.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!token ? (
+              <Button asChild variant="outline">
+                <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
+                  Sign in to save
+                </Link>
+              </Button>
+            ) : (
+              <>
+                {wishlistErr ? (
+                  <p className="text-sm text-destructive" role="alert">
+                    {wishlistErr}
+                  </p>
+                ) : null}
+                {wishlistMsg ? (
+                  <p className="text-sm text-foreground" role="status">
+                    {wishlistMsg}{' '}
+                    <Link to="/wishlist" className="text-primary underline-offset-4 hover:underline">
+                      View wishlist
+                    </Link>
+                  </p>
+                ) : null}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={addingWishlist}
+                    onClick={() => void addToWishlist()}
+                  >
+                    {addingWishlist ? 'Saving…' : 'Save to wishlist'}
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/wishlist">Go to wishlist</Link>
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {instrument.description ? (
         <Card className="ui-surface">

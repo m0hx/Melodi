@@ -169,10 +169,23 @@ public class OrderService {
 		return orderRepository.findByUser_IdOrderByCreatedAtDesc(user.getId());
 	}
 
+	public List<Order> listAllOrders() {
+		return orderRepository.findAllByOrderByCreatedAtDesc();
+	}
+
 	public OrderDetailResponse getMyOrder(Long orderId) {
 		User user = currentUserService.getCurrentUser();
 		Order order = orderRepository
 				.findByIdAndUser_Id(orderId, user.getId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+		Payment payment = paymentRepository.findByOrder_Id(orderId).orElse(null);
+		List<OrderItem> items = orderItemRepository.findByOrder_Id(orderId);
+		return new OrderDetailResponse(order, items, payment);
+	}
+
+	public OrderDetailResponse getOrderForAdmin(Long orderId) {
+		Order order = orderRepository
+				.findById(orderId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 		Payment payment = paymentRepository.findByOrder_Id(orderId).orElse(null);
 		List<OrderItem> items = orderItemRepository.findByOrder_Id(orderId);

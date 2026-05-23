@@ -37,22 +37,21 @@ export function Layout() {
     setMobileOpen(false)
   }, [location.pathname])
 
-  const links = useMemo(
-    () => [
+  const links = useMemo(() => {
+    const shopLinks = isAdmin
+      ? []
+      : [
+          { href: '/cart', label: 'Cart' },
+          { href: '/wishlist', label: 'Wishlist' },
+          { href: '/orders', label: 'Orders' },
+          { href: '/rentals', label: 'Rentals' },
+        ]
+    return [
       { href: '/instruments', label: 'Instruments' },
-      ...(token
-        ? [
-            { href: '/cart', label: 'Cart' },
-            { href: '/wishlist', label: 'Wishlist' },
-            { href: '/orders', label: 'Orders' },
-            { href: '/rentals', label: 'Rentals' },
-            { href: '/profile', label: 'Profile' },
-          ]
-        : []),
+      ...(token ? [...shopLinks, { href: '/profile', label: 'Profile' }] : []),
       ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
-    ],
-    [token, isAdmin],
-  )
+    ]
+  }, [token, isAdmin])
 
   const year = new Date().getFullYear()
 

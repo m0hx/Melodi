@@ -6,6 +6,16 @@ function apiBase(): string {
   return String(base).replace(/\/$/, '')
 }
 
+export function profileImageUrl(userId: number, cacheBust?: string | number) {
+  const url = `${apiBase()}/api/profile/${userId}/image`
+  return cacheBust != null ? `${url}?v=${cacheBust}` : url
+}
+
+export function instrumentImageUrl(instrumentId: number, cacheBust?: string | number) {
+  const url = `${apiBase()}/api/instruments/${instrumentId}/image`
+  return cacheBust != null ? `${url}?v=${cacheBust}` : url
+}
+
 function authHeaders(token?: string | null): HeadersInit {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
@@ -99,6 +109,27 @@ export async function putJson<T>(
     throw new Error(asErrorMessage(parsed, res.status))
   }
   return parsed as T
+}
+
+/** PUT multipart form with field name `image` (matches Postman collection). */
+export async function putImage(
+  path: string,
+  file: File,
+  opts?: { token?: string | null },
+): Promise<string> {
+  const p = path.startsWith('/') ? path : `/${path}`
+  const form = new FormData()
+  form.append('image', file)
+  const res = await fetch(`${apiBase()}${p}`, {
+    method: 'PUT',
+    headers: { ...authHeaders(opts?.token) },
+    body: form,
+  })
+  const parsed = await parseResponse(res)
+  if (!res.ok) {
+    throw new Error(asErrorMessage(parsed, res.status))
+  }
+  return typeof parsed === 'string' ? parsed : 'Image updated'
 }
 
 export async function deleteJson<T>(

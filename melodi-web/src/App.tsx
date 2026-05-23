@@ -18,10 +18,30 @@ import { VerifyEmailPage } from './pages/VerifyEmailPage.tsx'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage.tsx'
 import { ResetPasswordPage } from './pages/ResetPasswordPage.tsx'
 import { AdminPage } from './pages/AdminPage.tsx'
+import { AdminOrdersPage } from './pages/AdminOrdersPage.tsx'
+import { AdminOrderDetailPage } from './pages/AdminOrderDetailPage.tsx'
+import { AdminRentalsPage } from './pages/AdminRentalsPage.tsx'
 import { RequireAdmin } from './components/RequireAdmin.tsx'
+import { RequireCustomer } from './components/RequireCustomer.tsx'
 
 function Auth({ children }: { children: ReactNode }) {
   return <RequireAuth>{children}</RequireAuth>
+}
+
+function Customer({ children }: { children: ReactNode }) {
+  return (
+    <Auth>
+      <RequireCustomer>{children}</RequireCustomer>
+    </Auth>
+  )
+}
+
+function Admin({ children }: { children: ReactNode }) {
+  return (
+    <Auth>
+      <RequireAdmin>{children}</RequireAdmin>
+    </Auth>
+  )
 }
 
 export default function App() {
@@ -36,54 +56,12 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/instruments" element={<InstrumentsPage />} />
         <Route path="/instruments/:instrumentId" element={<InstrumentDetailPage />} />
-        <Route
-          path="/cart"
-          element={
-            <Auth>
-              <CartPage />
-            </Auth>
-          }
-        />
-        <Route
-          path="/checkout"
-          element={
-            <Auth>
-              <CheckoutPage />
-            </Auth>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <Auth>
-              <OrdersPage />
-            </Auth>
-          }
-        />
-        <Route
-          path="/orders/:orderId"
-          element={
-            <Auth>
-              <OrderDetailPage />
-            </Auth>
-          }
-        />
-        <Route
-          path="/rentals"
-          element={
-            <Auth>
-              <RentalsPage />
-            </Auth>
-          }
-        />
-        <Route
-          path="/wishlist"
-          element={
-            <Auth>
-              <WishlistPage />
-            </Auth>
-          }
-        />
+        <Route path="/cart" element={<Customer><CartPage /></Customer>} />
+        <Route path="/checkout" element={<Customer><CheckoutPage /></Customer>} />
+        <Route path="/orders" element={<Customer><OrdersPage /></Customer>} />
+        <Route path="/orders/:orderId" element={<Customer><OrderDetailPage /></Customer>} />
+        <Route path="/rentals" element={<Customer><RentalsPage /></Customer>} />
+        <Route path="/wishlist" element={<Customer><WishlistPage /></Customer>} />
         <Route
           path="/profile"
           element={
@@ -92,16 +70,10 @@ export default function App() {
             </Auth>
           }
         />
-        <Route
-          path="/admin"
-          element={
-            <Auth>
-              <RequireAdmin>
-                <AdminPage />
-              </RequireAdmin>
-            </Auth>
-          }
-        />
+        <Route path="/admin" element={<Admin><AdminPage /></Admin>} />
+        <Route path="/admin/orders" element={<Admin><AdminOrdersPage /></Admin>} />
+        <Route path="/admin/orders/:orderId" element={<Admin><AdminOrderDetailPage /></Admin>} />
+        <Route path="/admin/rentals" element={<Admin><AdminRentalsPage /></Admin>} />
       </Route>
     </Routes>
   )

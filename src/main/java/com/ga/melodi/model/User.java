@@ -43,8 +43,16 @@ public class User {
 	@Column(length = 500)
 	private String address;
 
+	@JsonIgnore
 	@Column(name = "profile_image_path", length = 500)
 	private String profileImagePath;
+
+	private String imageName;
+	private String imageType;
+
+	@JsonIgnore
+	@Column(name = "image_data", columnDefinition = "BYTEA")
+	private byte[] imageData;
 
 	@Column(name = "user_status", nullable = false, length = 20)
 	private String userStatus = "ACTIVE";

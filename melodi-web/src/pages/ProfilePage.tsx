@@ -1,5 +1,5 @@
-import { type FormEvent, useCallback, useEffect, useState } from 'react'
-import { getJson, patchJson, putJson } from '../api/client.ts'
+import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { deleteJson, getJson, patchJson, profileImageUrl, putImage, putJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,10 +13,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 type Profile = {
+  id: number
   fullName: string
   email: string
   phone?: string | null
   address?: string | null
+  imageName?: string | null
   role?: { name: string }
 }
 
@@ -29,6 +31,10 @@ export function ProfilePage() {
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [role, setRole] = useState('')
+  const [userId, setUserId] = useState<number | null>(null)
+  const [imageName, setImageName] = useState<string | null>(null)
+  const [imageVersion, setImageVersion] = useState(0)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -39,6 +45,9 @@ export function ProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [profileMsg, setProfileMsg] = useState<string | null>(null)
   const [pwMsg, setPwMsg] = useState<string | null>(null)
+  const [imageMsg, setImageMsg] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [removingImage, setRemovingImage] = useState(false)
 
   const loadProfile = useCallback(async () => {
     if (!token) return
@@ -51,6 +60,8 @@ export function ProfilePage() {
       setPhone(data.phone ?? '')
       setAddress(data.address ?? '')
       setRole(data.role?.name ?? '')
+      setUserId(data.id)
+      setImageName(data.imageName ?? null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load profile')
     } finally {
@@ -105,6 +116,43 @@ export function ProfilePage() {
     }
   }
 
+  async function onUploadImage(file: File) {
+    if (!token || userId == null) return
+    setUploadingImage(true)
+    setImageMsg(null)
+    setError(null)
+    try {
+      const msg = await putImage(`/api/profile/${userId}/image`, file, { token })
+      setImageMsg(msg)
+      setImageName(file.name)
+      setImageVersion(Date.now())
+      await loadProfile()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploadingImage(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  async function onRemoveImage() {
+    if (!token || userId == null) return
+    setRemovingImage(true)
+    setImageMsg(null)
+    setError(null)
+    try {
+      await deleteJson<string>(`/api/profile/${userId}/image`, { token })
+      setImageMsg('Profile image removed.')
+      setImageName(null)
+      setImageVersion(Date.now())
+      await loadProfile()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not remove image')
+    } finally {
+      setRemovingImage(false)
+    }
+  }
+
   if (loading) {
     return <p className="text-sm text-muted-foreground">Loading profile…</p>
   }
@@ -124,6 +172,63 @@ export function ProfilePage() {
           {error}
         </p>
       ) : null}
+
+      <Card className="ui-surface">
+        <CardHeader>
+          <CardTitle className="text-base">Profile picture</CardTitle>
+          <CardDescription>Upload a photo for your account.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            {userId != null && imageName ? (
+              <img
+                src={profileImageUrl(userId, imageVersion)}
+                alt=""
+                className="h-24 w-24 rounded-full border border-border/60 object-cover"
+              />
+            ) : (
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border border-dashed border-border/60 bg-muted/30 text-xs text-muted-foreground">
+                No photo
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) void onUploadImage(file)
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                disabled={uploadingImage}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {uploadingImage ? 'Uploading…' : imageName ? 'Change photo' : 'Upload photo'}
+              </Button>
+              {imageName ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={removingImage}
+                  onClick={() => void onRemoveImage()}
+                >
+                  {removingImage ? 'Removing…' : 'Remove photo'}
+                </Button>
+              ) : null}
+            </div>
+          </div>
+          {imageMsg ? (
+            <p className="text-sm text-foreground" role="status">
+              {imageMsg}
+            </p>
+          ) : null}
+        </CardContent>
+      </Card>
 
       <Card className="ui-surface">
         <CardHeader>

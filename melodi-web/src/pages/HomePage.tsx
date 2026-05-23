@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { getJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,12 +11,32 @@ import {
 } from '@/components/ui/card'
 import { useAuth } from '../auth/AuthContext.tsx'
 
+type Profile = { role?: { name: string } }
+
 type LocationState = { message?: string }
 
 export function HomePage() {
   const { token } = useAuth()
   const location = useLocation()
   const flash = (location.state as LocationState | null)?.message
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    setIsAdmin(false)
+    if (!token) return
+    ;(async () => {
+      try {
+        const profile = await getJson<Profile>('/api/profile', { token })
+        if (!cancelled) setIsAdmin(profile.role?.name === 'ADMIN')
+      } catch {
+        if (!cancelled) setIsAdmin(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [token])
 
   return (
     <div className="space-y-10">
@@ -43,9 +65,15 @@ export function HomePage() {
             <Link to="/instruments">Browse instruments</Link>
           </Button>
           {token ? (
-            <Button variant="outline" asChild>
-              <Link to="/orders">My orders</Link>
-            </Button>
+            isAdmin ? (
+              <Button variant="outline" asChild>
+                <Link to="/admin">Admin panel</Link>
+              </Button>
+            ) : (
+              <Button variant="outline" asChild>
+                <Link to="/orders">My orders</Link>
+              </Button>
+            )
           ) : (
             <Button variant="outline" asChild>
               <Link to="/signup">Create account</Link>
