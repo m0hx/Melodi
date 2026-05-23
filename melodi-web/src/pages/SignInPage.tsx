@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { postJson } from '../api/client.ts'
+import { getJson, postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
 import {
@@ -48,7 +48,16 @@ export function SignInPage() {
         return
       }
       setToken(data.message)
-      navigate('/', { state: { message: 'Signed in successfully.' } })
+      let destination = '/'
+      try {
+        const profile = await getJson<{ role?: { name: string } }>('/api/profile', {
+          token: data.message,
+        })
+        if (profile.role?.name === 'ADMIN') destination = '/admin'
+      } catch {
+        /* keep home */
+      }
+      navigate(destination, { state: { message: 'Signed in successfully.' } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign in failed')
     } finally {

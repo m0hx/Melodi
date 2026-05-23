@@ -9,6 +9,8 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
 	List<Rental> findByUser_IdOrderByStartsAtDesc(Long userId);
 
+	List<Rental> findAllByOrderByStartsAtDesc();
+
 	Optional<Rental> findByIdAndUser_Id(Long rentalId, Long userId);
 
 	boolean existsByOrderItem_Id(Long orderItemId);

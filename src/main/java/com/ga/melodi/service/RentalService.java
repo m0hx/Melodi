@@ -60,10 +60,47 @@ public class RentalService {
 	}
 
 	@Transactional
+	public List<Rental> listAllRentals() {
+		List<Rental> rentals = rentalRepository.findAllByOrderByStartsAtDesc();
+		for (Rental rental : rentals) {
+			if (markOverdueIfNeeded(rental)) {
+				rentalRepository.save(rental);
+			}
+		}
+		return rentals;
+	}
+
+	@Transactional
 	public Rental returnRental(Long rentalId) {
 		User user = currentUserService.getCurrentUser();
 		Rental rental = rentalRepository
 				.findByIdAndUser_Id(rentalId, user.getId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found"));
+
+		if ("RETURNED".equals(rental.getStatus())) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Rental already returned");
+		}
+		if ("CANCELLED".equals(rental.getStatus())) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Rental was cancelled");
+		}
+
+		Instrument instrument = instrumentRepository
+				.findById(rental.getInstrument().getId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Instrument not found"));
+
+		int quantity = rental.getOrderItem().getQuantity();
+		instrument.setRentalStock(instrument.getRentalStock() + quantity);
+		instrumentRepository.save(instrument);
+
+		rental.setReturnedAt(Instant.now());
+		rental.setStatus("RETURNED");
+		return rentalRepository.save(rental);
+	}
+
+	@Transactional
+	public Rental returnRentalAsAdmin(Long rentalId) {
+		Rental rental = rentalRepository
+				.findById(rentalId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found"));
 
 		if ("RETURNED".equals(rental.getStatus())) {
