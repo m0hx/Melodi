@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getJson } from '../api/client.ts'
+import { getJson, postJson } from '../api/client.ts'
+import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,6 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+function dateToInstant(date: string, endOfDay = false): string {
+  const time = endOfDay ? 'T23:59:59' : 'T00:00:00'
+  return new Date(`${date}${time}`).toISOString()
+}
 
 type Category = { id: number; name: string }
 type Brand = { id: number; name: string }
@@ -56,6 +64,7 @@ function formatDate(iso: string) {
 }
 
 export function InstrumentDetailPage() {
+  const { token } = useAuth()
   const { instrumentId: idParam } = useParams<{ instrumentId: string }>()
   const instrumentId = idParam != null ? Number(idParam) : NaN
 
@@ -63,6 +72,14 @@ export function InstrumentDetailPage() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const [cartMode, setCartMode] = useState<'BUY' | 'RENT'>('BUY')
+  const [cartQty, setCartQty] = useState(1)
+  const [rentStart, setRentStart] = useState('')
+  const [rentEnd, setRentEnd] = useState('')
+  const [cartMsg, setCartMsg] = useState<string | null>(null)
+  const [cartErr, setCartErr] = useState<string | null>(null)
+  const [addingCart, setAddingCart] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -97,6 +114,34 @@ export function InstrumentDetailPage() {
       cancelled = true
     }
   }, [instrumentId])
+
+  async function addToCart() {
+    if (!token) return
+    setCartErr(null)
+    setCartMsg(null)
+    setAddingCart(true)
+    try {
+      const body: Record<string, unknown> = {
+        instrumentId,
+        mode: cartMode,
+        quantity: cartQty,
+      }
+      if (cartMode === 'RENT') {
+        if (!rentStart || !rentEnd) {
+          setCartErr('Pick rental start and end dates')
+          return
+        }
+        body.rentalStartDate = dateToInstant(rentStart, false)
+        body.rentalEndDate = dateToInstant(rentEnd, true)
+      }
+      await postJson('/api/cart/items', body, { token })
+      setCartMsg('Added to cart.')
+    } catch (err) {
+      setCartErr(err instanceof Error ? err.message : 'Could not add to cart')
+    } finally {
+      setAddingCart(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -152,6 +197,97 @@ export function InstrumentDetailPage() {
           <p className="text-xs text-muted-foreground">Status: {instrument.status ?? 'N/A'}</p>
         </div>
       </div>
+
+      <Card className="ui-surface">
+        <CardHeader>
+          <CardTitle className="text-base">Add to cart</CardTitle>
+          <CardDescription>Sign in required to save items in your cart.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!token ? (
+            <Button asChild>
+              <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
+                Sign in to add to cart
+              </Link>
+            </Button>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={cartMode === 'BUY' ? 'default' : 'outline'}
+                  onClick={() => setCartMode('BUY')}
+                >
+                  Buy
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={cartMode === 'RENT' ? 'default' : 'outline'}
+                  onClick={() => setCartMode('RENT')}
+                >
+                  Rent
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cart-qty">Quantity</Label>
+                <Input
+                  id="cart-qty"
+                  type="number"
+                  min={1}
+                  className="w-24"
+                  value={cartQty}
+                  onChange={(e) => setCartQty(Math.max(1, Number(e.target.value) || 1))}
+                />
+              </div>
+              {cartMode === 'RENT' ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="rent-start">Start date</Label>
+                    <Input
+                      id="rent-start"
+                      type="date"
+                      value={rentStart}
+                      onChange={(e) => setRentStart(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rent-end">End date</Label>
+                    <Input
+                      id="rent-end"
+                      type="date"
+                      value={rentEnd}
+                      onChange={(e) => setRentEnd(e.target.value)}
+                    />
+                  </div>
+                </div>
+              ) : null}
+              {cartErr ? (
+                <p className="text-sm text-destructive" role="alert">
+                  {cartErr}
+                </p>
+              ) : null}
+              {cartMsg ? (
+                <p className="text-sm text-foreground" role="status">
+                  {cartMsg}{' '}
+                  <Link to="/cart" className="text-primary underline-offset-4 hover:underline">
+                    View cart
+                  </Link>
+                </p>
+              ) : null}
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" disabled={addingCart} onClick={() => void addToCart()}>
+                  {addingCart ? 'Adding…' : 'Add to cart'}
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to="/cart">Go to cart</Link>
+                </Button>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       {instrument.description ? (
         <Card className="ui-surface">
