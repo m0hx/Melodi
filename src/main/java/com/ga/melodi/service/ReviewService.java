@@ -1,5 +1,6 @@
 package com.ga.melodi.service;
 
+import com.ga.melodi.model.Instrument;
 import com.ga.melodi.model.OrderItem;
 import com.ga.melodi.model.Review;
 import com.ga.melodi.model.User;
@@ -93,9 +94,12 @@ public class ReviewService {
 	}
 
 	private void ensureInstrumentExists(Long instrumentId) {
-		instrumentRepository
+		Instrument instrument = instrumentRepository
 				.findById(instrumentId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found"));
+		if ("HIDDEN".equalsIgnoreCase(instrument.getStatus()) && !currentUserService.isCurrentUserAdmin()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found");
+		}
 	}
 
 	private void validateRating(int rating) {

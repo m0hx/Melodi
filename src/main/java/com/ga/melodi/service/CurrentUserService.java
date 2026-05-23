@@ -24,4 +24,13 @@ public class CurrentUserService {
 				.findByEmailIgnoreCase(details.getUsername())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 	}
+
+	public boolean isCurrentUserAdmin() {
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !(authentication.getPrincipal() instanceof MyUserDetails details)) {
+			return false;
+		}
+		return details.getAuthorities().stream()
+				.anyMatch(a -> "ADMIN".equalsIgnoreCase(a.getAuthority()));
+	}
 }

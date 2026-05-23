@@ -11,6 +11,9 @@ import { CartPage } from './pages/CartPage.tsx'
 import { CheckoutPage } from './pages/CheckoutPage.tsx'
 import { OrdersPage } from './pages/OrdersPage.tsx'
 import { OrderDetailPage } from './pages/OrderDetailPage.tsx'
+import { ProfilePage } from './pages/ProfilePage.tsx'
+import { WishlistPage } from './pages/WishlistPage.tsx'
+import { RentalsPage } from './pages/RentalsPage.tsx'
 import { PlaceholderPage } from './pages/PlaceholderPage.tsx'
 
 function Auth({ children }: { children: ReactNode }) {
@@ -58,9 +61,30 @@ export default function App() {
             </Auth>
           }
         />
-        <Route path="/rentals" element={<PlaceholderPage title="Rentals" />} />
-        <Route path="/wishlist" element={<PlaceholderPage title="Wishlist" />} />
-        <Route path="/profile" element={<PlaceholderPage title="Profile" />} />
+        <Route
+          path="/rentals"
+          element={
+            <Auth>
+              <RentalsPage />
+            </Auth>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <Auth>
+              <WishlistPage />
+            </Auth>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Auth>
+              <ProfilePage />
+            </Auth>
+          }
+        />
         <Route path="/admin" element={<PlaceholderPage title="Admin" />} />
       </Route>
     </Routes>

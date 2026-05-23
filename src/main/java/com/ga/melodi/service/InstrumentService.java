@@ -21,24 +21,30 @@ public class InstrumentService {
 	private final CategoryRepository categoryRepository;
 	private final BrandRepository brandRepository;
 	private final OrderItemRepository orderItemRepository;
+	private final CurrentUserService currentUserService;
 
 	public List<Instrument> getAllInstruments(Long categoryId, Long brandId, String status) {
+		List<Instrument> instruments;
 		if (categoryId != null) {
-			return instrumentRepository.findByCategory_Id(categoryId);
+			instruments = instrumentRepository.findByCategory_Id(categoryId);
+		} else if (brandId != null) {
+			instruments = instrumentRepository.findByBrand_Id(brandId);
+		} else if (status != null && !status.isBlank()) {
+			instruments = instrumentRepository.findByStatus(status.trim());
+		} else {
+			instruments = instrumentRepository.findAll();
 		}
-		if (brandId != null) {
-			return instrumentRepository.findByBrand_Id(brandId);
-		}
-		if (status != null && !status.isBlank()) {
-			return instrumentRepository.findByStatus(status.trim());
-		}
-		return instrumentRepository.findAll();
+		return visibleForCurrentUser(instruments);
 	}
 
 	public Instrument getInstrumentById(Long instrumentId) {
-		return instrumentRepository
+		Instrument instrument = instrumentRepository
 				.findById(instrumentId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found with id: " + instrumentId));
+		if (isHidden(instrument) && !currentUserService.isCurrentUserAdmin()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found with id: " + instrumentId);
+		}
+		return instrument;
 	}
 
 	public Instrument createInstrument(Instrument instrumentObject) {
@@ -111,5 +117,16 @@ public class InstrumentService {
 		if (instrument.getRentalStock() == null || instrument.getRentalStock() < 0) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rental stock cannot be negative");
 		}
+	}
+
+	private List<Instrument> visibleForCurrentUser(List<Instrument> instruments) {
+		if (currentUserService.isCurrentUserAdmin()) {
+			return instruments;
+		}
+		return instruments.stream().filter(i -> !isHidden(i)).toList();
+	}
+
+	private static boolean isHidden(Instrument instrument) {
+		return instrument.getStatus() != null && "HIDDEN".equalsIgnoreCase(instrument.getStatus());
 	}
 }
