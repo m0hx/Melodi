@@ -84,6 +84,9 @@ public class UserService {
 		if (userOpt.isPresent() && userOpt.get().getEmailVerifiedAt() == null) {
 			return ResponseEntity.ok(new LoginResponse("Error : Email not verified"));
 		}
+		if (userOpt.isPresent() && !"ACTIVE".equalsIgnoreCase(userOpt.get().getUserStatus())) {
+			return ResponseEntity.ok(new LoginResponse("Error : Account is inactive"));
+		}
 		try {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));

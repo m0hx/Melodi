@@ -4,6 +4,7 @@ import {
   deleteJson,
   getJson,
   instrumentImageUrl,
+  patchJson,
   postJson,
   putJson,
 } from '../api/client.ts'
@@ -19,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-type Tab = 'instruments' | 'categories' | 'brands'
+type Tab = 'instruments' | 'categories' | 'brands' | 'users'
 
 type Profile = {
   fullName: string
@@ -56,7 +57,27 @@ type Instrument = {
   brand?: { id: number; name: string } | null
 }
 
+type AdminUser = {
+  id: number
+  fullName: string
+  email: string
+  phone?: string | null
+  address?: string | null
+  userStatus?: string | null
+  role?: { id: number; name: string } | null
+  emailVerifiedAt?: string | null
+}
+
+const emptyUserForm = {
+  fullName: '',
+  phone: '',
+  address: '',
+  roleName: 'USER',
+  userStatus: 'ACTIVE',
+}
 const STATUSES = ['AVAILABLE', 'UNAVAILABLE', 'DISCONTINUED', 'HIDDEN'] as const
+const USER_STATUSES = ['ACTIVE', 'INACTIVE'] as const
+const ROLES = ['USER', 'ADMIN'] as const
 const CONDITIONS = ['NEW', 'USED', 'REFURBISHED'] as const
 
 const emptyInstrumentForm = {
@@ -79,6 +100,7 @@ export function AdminPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [brands, setBrands] = useState<Brand[]>([])
   const [instruments, setInstruments] = useState<Instrument[]>([])
+  const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [msg, setMsg] = useState<string | null>(null)
@@ -93,21 +115,28 @@ export function AdminPage() {
   const [editingInstrumentId, setEditingInstrumentId] = useState<number | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
+  const [userForm, setUserForm] = useState(emptyUserForm)
+  const [editingUserId, setEditingUserId] = useState<number | null>(null)
+  const [editingUserEmail, setEditingUserEmail] = useState('')
+
   const loadAll = useCallback(async () => {
     if (!token) return
     setLoading(true)
     setError(null)
     try {
-      const [profileData, categoriesData, brandsData, instrumentsData] = await Promise.all([
+      const [profileData, categoriesData, brandsData, instrumentsData, usersData] =
+        await Promise.all([
         getJson<Profile>('/api/profile', { token }),
         getJson<Category[]>('/api/categories', { token }),
         getJson<Brand[]>('/api/brands', { token }),
         getJson<Instrument[]>('/api/instruments', { token }),
+        getJson<AdminUser[]>('/api/admin/users', { token }),
       ])
       setProfile(profileData)
       setCategories(Array.isArray(categoriesData) ? categoriesData : [])
       setBrands(Array.isArray(brandsData) ? brandsData : [])
       setInstruments(Array.isArray(instrumentsData) ? instrumentsData : [])
+      setUsers(Array.isArray(usersData) ? usersData : [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load admin data')
     } finally {
@@ -284,6 +313,54 @@ export function AdminPage() {
     }
   }
 
+  async function onSaveUser(e: FormEvent) {
+    e.preventDefault()
+    if (!token || editingUserId == null) return
+    setError(null)
+    try {
+      await patchJson<AdminUser>(
+        `/api/admin/users/${editingUserId}`,
+        {
+          fullName: userForm.fullName.trim(),
+          phone: userForm.phone.trim() || null,
+          address: userForm.address.trim() || null,
+          roleName: userForm.roleName,
+          userStatus: userForm.userStatus,
+        },
+        { token },
+      )
+      flash('User updated.')
+      setEditingUserId(null)
+      setEditingUserEmail('')
+      setUserForm(emptyUserForm)
+      await loadAll()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'User save failed')
+    }
+  }
+
+  async function onToggleUserStatus(user: AdminUser) {
+    if (!token) return
+    const next = user.userStatus?.toUpperCase() === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+    const action = next === 'INACTIVE' ? 'deactivate' : 'reactivate'
+    if (!window.confirm(`${action} ${user.email}?`)) return
+    setError(null)
+    try {
+      await patchJson<AdminUser>(
+        `/api/admin/users/${user.id}`,
+        { userStatus: next },
+        { token },
+      )
+      flash(next === 'INACTIVE' ? 'User deactivated.' : 'User reactivated.')
+      if (editingUserId === user.id) {
+        setUserForm((f) => ({ ...f, userStatus: next }))
+      }
+      await loadAll()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Status update failed')
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -296,7 +373,7 @@ export function AdminPage() {
         {!loading ? (
           <p className="text-sm text-muted-foreground">
             {instruments.length} instruments ({hiddenCount} hidden) · {categories.length}{' '}
-            categories · {brands.length} brands
+            categories · {brands.length} brands · {users.length} users
           </p>
         ) : null}
       </div>
@@ -325,6 +402,14 @@ export function AdminPage() {
           onClick={() => setTab('brands')}
         >
           Brands
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={tab === 'users' ? 'default' : 'outline'}
+          onClick={() => setTab('users')}
+        >
+          Users
         </Button>
         <Button size="sm" variant="outline" asChild>
           <Link to="/admin/orders">All orders</Link>
@@ -541,6 +626,158 @@ export function AdminPage() {
                   </div>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+        </div>
+      ) : tab === 'users' ? (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="ui-surface">
+            <CardHeader>
+              <CardTitle className="text-base">
+                {editingUserId != null ? 'Edit user' : 'Select a user'}
+              </CardTitle>
+              <CardDescription>
+                Soft delete sets status to INACTIVE. User cannot sign in.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {editingUserId != null ? (
+                <form className="space-y-3" onSubmit={onSaveUser}>
+                  <div className="space-y-2">
+                    <Label htmlFor="user-email">Email</Label>
+                    <Input id="user-email" value={editingUserEmail} readOnly disabled />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="user-name">Full name</Label>
+                    <Input
+                      id="user-name"
+                      value={userForm.fullName}
+                      onChange={(e) => setUserForm((f) => ({ ...f, fullName: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="user-phone">Phone</Label>
+                    <Input
+                      id="user-phone"
+                      value={userForm.phone}
+                      onChange={(e) => setUserForm((f) => ({ ...f, phone: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="user-address">Address</Label>
+                    <Input
+                      id="user-address"
+                      value={userForm.address}
+                      onChange={(e) => setUserForm((f) => ({ ...f, address: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="user-role">Role</Label>
+                    <select
+                      id="user-role"
+                      className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                      value={userForm.roleName}
+                      onChange={(e) => setUserForm((f) => ({ ...f, roleName: e.target.value }))}
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="user-status">Status</Label>
+                    <select
+                      id="user-status"
+                      className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                      value={userForm.userStatus}
+                      onChange={(e) => setUserForm((f) => ({ ...f, userStatus: e.target.value }))}
+                    >
+                      {USER_STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button type="submit">Save changes</Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingUserId(null)
+                        setEditingUserEmail('')
+                        setUserForm(emptyUserForm)
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Choose a user from the list to edit details or change status.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+          <Card className="ui-surface">
+            <CardHeader>
+              <CardTitle className="text-base">All users</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {users.map((u) => {
+                const active = u.userStatus?.toUpperCase() !== 'INACTIVE'
+                return (
+                  <div
+                    key={u.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 px-3 py-2 text-sm"
+                  >
+                    <div>
+                      <p className="font-medium">{u.fullName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {u.email} · {u.role?.name ?? 'USER'} ·{' '}
+                        <span className={active ? 'text-foreground' : 'text-destructive'}>
+                          {u.userStatus ?? 'ACTIVE'}
+                        </span>
+                        {u.emailVerifiedAt ? '' : ' · unverified'}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setEditingUserId(u.id)
+                          setEditingUserEmail(u.email)
+                          setUserForm({
+                            fullName: u.fullName,
+                            phone: u.phone ?? '',
+                            address: u.address ?? '',
+                            roleName: u.role?.name ?? 'USER',
+                            userStatus:
+                              u.userStatus?.toUpperCase() === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
+                          })
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={active ? 'outline' : 'default'}
+                        onClick={() => void onToggleUserStatus(u)}
+                      >
+                        {active ? 'Deactivate' : 'Reactivate'}
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
             </CardContent>
           </Card>
         </div>
@@ -769,7 +1006,7 @@ export function AdminPage() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" variant="outline" asChild>
-                      <Link to={`/instruments/${item.id}`}>Open</Link>
+                      <Link to={`/instruments/${item.id}`}>View</Link>
                     </Button>
                     <Button
                       type="button"
