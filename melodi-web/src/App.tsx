@@ -14,6 +14,11 @@ import { OrderDetailPage } from './pages/OrderDetailPage.tsx'
 import { ProfilePage } from './pages/ProfilePage.tsx'
 import { WishlistPage } from './pages/WishlistPage.tsx'
 import { RentalsPage } from './pages/RentalsPage.tsx'
+import { VerifyEmailPage } from './pages/VerifyEmailPage.tsx'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage.tsx'
+import { ResetPasswordPage } from './pages/ResetPasswordPage.tsx'
+import { AdminPage } from './pages/AdminPage.tsx'
+import { RequireAdmin } from './components/RequireAdmin.tsx'
 
 function Auth({ children }: { children: ReactNode }) {
   return <RequireAuth>{children}</RequireAuth>
@@ -26,6 +31,9 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/instruments" element={<InstrumentsPage />} />
         <Route path="/instruments/:instrumentId" element={<InstrumentDetailPage />} />
         <Route
@@ -81,6 +89,16 @@ export default function App() {
           element={
             <Auth>
               <ProfilePage />
+            </Auth>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <Auth>
+              <RequireAdmin>
+                <AdminPage />
+              </RequireAdmin>
             </Auth>
           }
         />

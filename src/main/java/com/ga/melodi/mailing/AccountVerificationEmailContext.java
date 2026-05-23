@@ -18,7 +18,7 @@ public class AccountVerificationEmailContext extends AbstractEmailContext {
 
 	public void buildVerificationUrl(String baseUrl, String token) {
 		String url = UriComponentsBuilder.fromUriString(baseUrl)
-				.path("/auth/users/register/verify")
+				.path("/verify-email")
 				.queryParam("token", token)
 				.toUriString();
 		put("verificationURL", url);

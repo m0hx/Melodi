@@ -50,6 +50,9 @@ public class UserService {
 	@Value("${melodi.app.base-url:http://localhost:8080}")
 	private String appBaseUrl;
 
+	@Value("${melodi.app.frontend-url:http://localhost:5173}")
+	private String frontendBaseUrl;
+
 	@Transactional
 	public User createUser(RegisterRequest req) {
 		if (req.getEmail() == null || req.getPassword() == null || req.getName() == null) {
@@ -100,7 +103,7 @@ public class UserService {
 		AccountVerificationEmailContext context = new AccountVerificationEmailContext();
 		context.init(user);
 		context.setToken(secureToken.getToken());
-		context.buildVerificationUrl(appBaseUrl, secureToken.getToken());
+		context.buildVerificationUrl(frontendBaseUrl, secureToken.getToken());
 
 		sendMailSafe(context, "verification", context.getContext().get("verificationURL"));
 	}
@@ -164,7 +167,7 @@ public class UserService {
 		AccountPasswordResetEmailContext context = new AccountPasswordResetEmailContext();
 		context.init(user);
 		context.setToken(secureToken.getToken());
-		context.buildResetUrl(appBaseUrl, secureToken.getToken());
+		context.buildResetUrl(frontendBaseUrl, secureToken.getToken());
 
 		sendMailSafe(context, "password reset", context.getContext().get("resetURL"));
 	}

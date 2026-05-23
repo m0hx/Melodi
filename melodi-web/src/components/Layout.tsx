@@ -1,16 +1,37 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.tsx'
+import { getJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
 
 function isActivePath(pathname: string, href: string) {
   return href === '/' ? pathname === '/' : pathname.startsWith(href)
 }
 
+type Profile = { role?: { name: string } }
+
 export function Layout() {
   const { token, logout } = useAuth()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    setIsAdmin(false)
+    if (!token) return
+    ;(async () => {
+      try {
+        const profile = await getJson<Profile>('/api/profile', { token })
+        if (!cancelled) setIsAdmin(profile.role?.name === 'ADMIN')
+      } catch {
+        if (!cancelled) setIsAdmin(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [token])
 
   useEffect(() => {
     setMobileOpen(false)
@@ -28,8 +49,9 @@ export function Layout() {
             { href: '/profile', label: 'Profile' },
           ]
         : []),
+      ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
     ],
-    [token],
+    [token, isAdmin],
   )
 
   const year = new Date().getFullYear()
