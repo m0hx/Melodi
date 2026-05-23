@@ -18,7 +18,7 @@ public class AccountPasswordResetEmailContext extends AbstractEmailContext {
 
 	public void buildResetUrl(String baseUrl, String token) {
 		String url = UriComponentsBuilder.fromUriString(baseUrl)
-				.path("/auth/users/resetPassword")
+				.path("/reset-password")
 				.queryParam("token", token)
 				.toUriString();
 		put("resetURL", url);
