@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { postJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,17 +20,18 @@ type RegisterResponse = {
 }
 
 export function SignUpPage() {
-  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     if (password !== confirmPassword) {
       setError('Passwords do not match')
       return
@@ -42,7 +43,9 @@ export function SignUpPage() {
         email,
         password,
       })
-      navigate('/signin')
+      setSuccess(
+        `Account created. We sent a verification link to ${email}. Open your inbox, verify your email, then sign in.`,
+      )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign up failed')
     } finally {
@@ -57,68 +60,82 @@ export function SignUpPage() {
           Create account
         </CardTitle>
         <CardDescription>
-          Register with your name, email, and password. Check your inbox to verify.
+          Register with your name, email, and password.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <div className="space-y-2">
-            <Label htmlFor="signup-name">Full name</Label>
-            <Input
-              id="signup-name"
-              type="text"
-              autoComplete="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              aria-invalid={error ? true : undefined}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-email">Email</Label>
-            <Input
-              id="signup-email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              aria-invalid={error ? true : undefined}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-password">Password</Label>
-            <Input
-              id="signup-password"
-              type="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              aria-invalid={error ? true : undefined}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="signup-confirm-password">Confirm password</Label>
-            <Input
-              id="signup-confirm-password"
-              type="password"
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              aria-invalid={error ? true : undefined}
-            />
-          </div>
-          {error ? (
-            <p className="text-sm text-destructive" role="alert">
-              {error}
+        {success ? (
+          <div className="space-y-4">
+            <p
+              className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground"
+              role="status"
+            >
+              {success}
             </p>
-          ) : null}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account…' : 'Create account'}
-          </Button>
-        </form>
+            <Button className="w-full" asChild>
+              <Link to="/signin">Go to sign in</Link>
+            </Button>
+          </div>
+        ) : (
+          <form className="space-y-4" onSubmit={onSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="signup-name">Full name</Label>
+              <Input
+                id="signup-name"
+                type="text"
+                autoComplete="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                aria-invalid={error ? true : undefined}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signup-email">Email</Label>
+              <Input
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                aria-invalid={error ? true : undefined}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signup-password">Password</Label>
+              <Input
+                id="signup-password"
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                aria-invalid={error ? true : undefined}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signup-confirm-password">Confirm password</Label>
+              <Input
+                id="signup-confirm-password"
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                aria-invalid={error ? true : undefined}
+              />
+            </div>
+            {error ? (
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            ) : null}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Creating account…' : 'Create account'}
+            </Button>
+          </form>
+        )}
       </CardContent>
       <CardFooter className="flex flex-col border-t border-border/60 bg-transparent py-4">
         <p className="text-center text-sm text-muted-foreground">

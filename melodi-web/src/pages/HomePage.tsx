@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,11 +9,23 @@ import {
 } from '@/components/ui/card'
 import { useAuth } from '../auth/AuthContext.tsx'
 
+type LocationState = { message?: string }
+
 export function HomePage() {
   const { token } = useAuth()
+  const location = useLocation()
+  const flash = (location.state as LocationState | null)?.message
 
   return (
     <div className="space-y-10">
+      {flash ? (
+        <p
+          className="rounded-lg border border-border/60 bg-muted/40 px-4 py-3 text-sm text-foreground"
+          role="status"
+        >
+          {flash}
+        </p>
+      ) : null}
       <section className="piano-hero space-y-4 rounded-2xl border border-border/60 px-6 py-10 md:px-10 md:py-12">
         <p className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
           Melodi Instruments

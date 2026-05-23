@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
@@ -16,16 +16,22 @@ import { Label } from '@/components/ui/label'
 
 type LoginResponse = { message: string }
 
+type LocationState = { message?: string }
+
 function isLoginError(message: string) {
   return message.startsWith('Error')
 }
 
 export function SignInPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { setToken } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [info] = useState<string | null>(
+    () => (location.state as LocationState | null)?.message ?? null,
+  )
   const [loading, setLoading] = useState(false)
 
   async function onSubmit(e: FormEvent) {
@@ -42,7 +48,7 @@ export function SignInPage() {
         return
       }
       setToken(data.message)
-      navigate('/')
+      navigate('/', { state: { message: 'Signed in successfully.' } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign in failed')
     } finally {
@@ -62,6 +68,14 @@ export function SignInPage() {
       </CardHeader>
       <CardContent>
         <form className="space-y-4" onSubmit={onSubmit}>
+          {info ? (
+            <p
+              className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground"
+              role="status"
+            >
+              {info}
+            </p>
+          ) : null}
           <div className="space-y-2">
             <Label htmlFor="signin-email">Email</Label>
             <Input
