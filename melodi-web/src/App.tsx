@@ -14,7 +14,6 @@ import { OrderDetailPage } from './pages/OrderDetailPage.tsx'
 import { ProfilePage } from './pages/ProfilePage.tsx'
 import { WishlistPage } from './pages/WishlistPage.tsx'
 import { RentalsPage } from './pages/RentalsPage.tsx'
-import { PlaceholderPage } from './pages/PlaceholderPage.tsx'
 
 function Auth({ children }: { children: ReactNode }) {
   return <RequireAuth>{children}</RequireAuth>
@@ -85,7 +84,6 @@ export default function App() {
             </Auth>
           }
         />
-        <Route path="/admin" element={<PlaceholderPage title="Admin" />} />
       </Route>
     </Routes>
   )
