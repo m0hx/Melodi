@@ -1,7 +1,15 @@
-# Melodi Instruments
+<h1 align="center">
+  <img src="melodi-web/public/android-chrome-192x192.png" width="56" alt="Melodi logo" valign="middle" />
+  Melodi Instruments
+</h1>
 
-Music Instruments Shop
+<p align="center">Music Instruments Shop</p>
 
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=iO9lZi0Tevw">
+    <img src="https://i.ytimg.com/vi/iO9lZi0Tevw/maxresdefault.jpg" alt="Demo video" width="640" />
+  </a>
+</p>
 
 ## Quick start
 
