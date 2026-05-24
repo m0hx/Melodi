@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { deleteJson, getJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -69,7 +70,7 @@ export function WishlistPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">Wishlist</h1>
         <p className="text-sm text-muted-foreground">Instruments you want to revisit later.</p>
       </div>
@@ -110,16 +111,19 @@ export function WishlistPage() {
                 </div>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/instruments/${item.instrument.id}`}>View</Link>
+                <Button size="sm" variant="outline" asChild className={withIcon}>
+                  <Link to={`/instruments/${item.instrument.id}`}>
+                    <IconLabel icon={icons.eye}>View</IconLabel>
+                  </Link>
                 </Button>
                 <Button
                   size="sm"
                   variant="destructive"
+                  className={withIcon}
                   disabled={busyId === item.id}
                   onClick={() => void removeItem(item.id)}
                 >
-                  Remove
+                  <IconLabel icon={icons.trash}>Remove</IconLabel>
                 </Button>
               </CardContent>
             </Card>

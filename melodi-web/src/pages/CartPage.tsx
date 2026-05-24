@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { deleteJson, getJson, patchJson, postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -107,7 +108,7 @@ export function CartPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">Cart</h1>
         <p className="text-sm text-muted-foreground">Review items before checkout.</p>
       </div>
@@ -163,17 +164,20 @@ export function CartPage() {
                     type="button"
                     variant="destructive"
                     size="sm"
+                    className={withIcon}
                     disabled={busyId === item.id}
                     onClick={() => void removeItem(item.id)}
                   >
-                    Remove
+                    <IconLabel icon={icons.trash}>Remove</IconLabel>
                   </Button>
                 </CardContent>
               </Card>
             ))}
           </div>
-          <Button className="w-full sm:w-auto" disabled={checkingOut} onClick={() => void placeOrder()}>
-            {checkingOut ? 'Placing order…' : 'Place order'}
+          <Button className={`w-full sm:w-auto ${withIcon}`} disabled={checkingOut} onClick={() => void placeOrder()}>
+            <IconLabel icon={icons.bag}>
+              {checkingOut ? 'Placing order…' : 'Place order'}
+            </IconLabel>
           </Button>
         </>
       )}

@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { postJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -67,13 +68,15 @@ export function SignUpPage() {
         {success ? (
           <div className="space-y-4">
             <p
-              className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground"
+              className="ui-notice"
               role="status"
             >
               {success}
             </p>
-            <Button className="w-full" asChild>
-              <Link to="/signin">Go to sign in</Link>
+            <Button className={`w-full ${withIcon}`} asChild>
+              <Link to="/signin">
+                <IconLabel icon={icons.signIn}>Go to sign in</IconLabel>
+              </Link>
             </Button>
           </div>
         ) : (
@@ -131,8 +134,10 @@ export function SignUpPage() {
                 {error}
               </p>
             ) : null}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account…' : 'Create account'}
+            <Button type="submit" className={`w-full ${withIcon}`} disabled={loading}>
+              <IconLabel icon={icons.signUp}>
+                {loading ? 'Creating account…' : 'Create account'}
+              </IconLabel>
             </Button>
           </form>
         )}

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getJson, postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -133,7 +134,7 @@ export function CheckoutPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">Checkout</h1>
         <p className="text-sm text-muted-foreground">
           Order {order.orderNumber} · {formatMoney(Number(order.totalAmount))}
@@ -181,14 +182,18 @@ export function CheckoutPage() {
                 placeholder="CARD"
               />
             </div>
-            <Button className="w-full" disabled={paying} onClick={() => void confirmPayment()}>
-              {paying ? 'Confirming…' : 'Confirm payment'}
+            <Button className={`w-full ${withIcon}`} disabled={paying} onClick={() => void confirmPayment()}>
+              <IconLabel icon={icons.creditCard}>
+                {paying ? 'Confirming…' : 'Confirm payment'}
+              </IconLabel>
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <Button asChild>
-          <Link to={`/orders/${order.id}`}>View order</Link>
+        <Button asChild className={withIcon}>
+          <Link to={`/orders/${order.id}`}>
+            <IconLabel icon={icons.eye}>View order</IconLabel>
+          </Link>
         </Button>
       )}
     </div>

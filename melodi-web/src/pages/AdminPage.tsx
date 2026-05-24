@@ -10,6 +10,7 @@ import {
 } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -363,7 +364,7 @@ export function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">Admin</h1>
         <p className="text-sm text-muted-foreground">
           {profile
@@ -382,40 +383,48 @@ export function AdminPage() {
         <Button
           type="button"
           size="sm"
+          className={withIcon}
           variant={tab === 'instruments' ? 'default' : 'outline'}
           onClick={() => setTab('instruments')}
         >
-          Instruments
+          <IconLabel icon={icons.guitar}>Instruments</IconLabel>
         </Button>
         <Button
           type="button"
           size="sm"
+          className={withIcon}
           variant={tab === 'categories' ? 'default' : 'outline'}
           onClick={() => setTab('categories')}
         >
-          Categories
+          <IconLabel icon={icons.tags}>Categories</IconLabel>
         </Button>
         <Button
           type="button"
           size="sm"
+          className={withIcon}
           variant={tab === 'brands' ? 'default' : 'outline'}
           onClick={() => setTab('brands')}
         >
-          Brands
+          <IconLabel icon={icons.store}>Brands</IconLabel>
         </Button>
         <Button
           type="button"
           size="sm"
+          className={withIcon}
           variant={tab === 'users' ? 'default' : 'outline'}
           onClick={() => setTab('users')}
         >
-          Users
+          <IconLabel icon={icons.users}>Users</IconLabel>
         </Button>
-        <Button size="sm" variant="outline" asChild>
-          <Link to="/admin/orders">All orders</Link>
+        <Button size="sm" variant="outline" asChild className={withIcon}>
+          <Link to="/admin/orders">
+            <IconLabel icon={icons.receipt}>All orders</IconLabel>
+          </Link>
         </Button>
-        <Button size="sm" variant="outline" asChild>
-          <Link to="/admin/rentals">All rentals</Link>
+        <Button size="sm" variant="outline" asChild className={withIcon}>
+          <Link to="/admin/rentals">
+            <IconLabel icon={icons.calendar}>All rentals</IconLabel>
+          </Link>
         </Button>
       </div>
 
@@ -462,19 +471,22 @@ export function AdminPage() {
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="submit">
-                    {editingCategoryId != null ? 'Save changes' : 'Create category'}
-                  </Button>
+                    <Button type="submit" className={withIcon}>
+                      <IconLabel icon={icons.save}>
+                        {editingCategoryId != null ? 'Save changes' : 'Create category'}
+                      </IconLabel>
+                    </Button>
                   {editingCategoryId != null ? (
                     <Button
                       type="button"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => {
                         setEditingCategoryId(null)
                         setCategoryForm({ name: '', description: '' })
                       }}
                     >
-                      Cancel
+                      <IconLabel icon={icons.xmark}>Cancel</IconLabel>
                     </Button>
                   ) : null}
                 </div>
@@ -502,6 +514,7 @@ export function AdminPage() {
                       type="button"
                       size="sm"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => {
                         setEditingCategoryId(c.id)
                         setCategoryForm({
@@ -510,15 +523,16 @@ export function AdminPage() {
                         })
                       }}
                     >
-                      Edit
+                      <IconLabel icon={icons.pen}>Edit</IconLabel>
                     </Button>
                     <Button
                       type="button"
                       size="sm"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => void onDeleteCategory(c.id)}
                     >
-                      Delete
+                      <IconLabel icon={icons.trash}>Delete</IconLabel>
                     </Button>
                   </div>
                 </div>
@@ -564,19 +578,22 @@ export function AdminPage() {
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="submit">
-                    {editingBrandId != null ? 'Save changes' : 'Create brand'}
+                  <Button type="submit" className={withIcon}>
+                    <IconLabel icon={icons.save}>
+                      {editingBrandId != null ? 'Save changes' : 'Create brand'}
+                    </IconLabel>
                   </Button>
                   {editingBrandId != null ? (
                     <Button
                       type="button"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => {
                         setEditingBrandId(null)
                         setBrandForm({ name: '', country: '', description: '' })
                       }}
                     >
-                      Cancel
+                      <IconLabel icon={icons.xmark}>Cancel</IconLabel>
                     </Button>
                   ) : null}
                 </div>
@@ -604,6 +621,7 @@ export function AdminPage() {
                       type="button"
                       size="sm"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => {
                         setEditingBrandId(b.id)
                         setBrandForm({
@@ -613,15 +631,16 @@ export function AdminPage() {
                         })
                       }}
                     >
-                      Edit
+                      <IconLabel icon={icons.pen}>Edit</IconLabel>
                     </Button>
                     <Button
                       type="button"
                       size="sm"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => void onDeleteBrand(b.id)}
                     >
-                      Delete
+                      <IconLabel icon={icons.trash}>Delete</IconLabel>
                     </Button>
                   </div>
                 </div>
@@ -703,17 +722,20 @@ export function AdminPage() {
                     </select>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button type="submit">Save changes</Button>
+                    <Button type="submit" className={withIcon}>
+                      <IconLabel icon={icons.save}>Save changes</IconLabel>
+                    </Button>
                     <Button
                       type="button"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => {
                         setEditingUserId(null)
                         setEditingUserEmail('')
                         setUserForm(emptyUserForm)
                       }}
                     >
-                      Cancel
+                      <IconLabel icon={icons.xmark}>Cancel</IconLabel>
                     </Button>
                   </div>
                 </form>
@@ -751,6 +773,7 @@ export function AdminPage() {
                         type="button"
                         size="sm"
                         variant="outline"
+                        className={withIcon}
                         onClick={() => {
                           setEditingUserId(u.id)
                           setEditingUserEmail(u.email)
@@ -764,15 +787,18 @@ export function AdminPage() {
                           })
                         }}
                       >
-                        Edit
+                        <IconLabel icon={icons.pen}>Edit</IconLabel>
                       </Button>
                       <Button
                         type="button"
                         size="sm"
                         variant={active ? 'outline' : 'default'}
+                        className={withIcon}
                         onClick={() => void onToggleUserStatus(u)}
                       >
-                        {active ? 'Deactivate' : 'Reactivate'}
+                        <IconLabel icon={active ? icons.userSlash : icons.return}>
+                          {active ? 'Deactivate' : 'Reactivate'}
+                        </IconLabel>
                       </Button>
                     </div>
                   </div>
@@ -942,19 +968,22 @@ export function AdminPage() {
                   </select>
                 </div>
                 <div className="flex flex-wrap gap-2 sm:col-span-2">
-                  <Button type="submit">
-                    {editingInstrumentId != null ? 'Save instrument' : 'Create instrument'}
+                  <Button type="submit" className={withIcon}>
+                    <IconLabel icon={icons.save}>
+                      {editingInstrumentId != null ? 'Save instrument' : 'Create instrument'}
+                    </IconLabel>
                   </Button>
                   {editingInstrumentId != null ? (
                     <Button
                       type="button"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => {
                         setEditingInstrumentId(null)
                         setInstrumentForm(emptyInstrumentForm)
                       }}
                     >
-                      Cancel
+                      <IconLabel icon={icons.xmark}>Cancel</IconLabel>
                     </Button>
                   ) : null}
                 </div>
@@ -1005,24 +1034,28 @@ export function AdminPage() {
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" asChild>
-                      <Link to={`/instruments/${item.id}`}>View</Link>
+                    <Button size="sm" variant="outline" asChild className={withIcon}>
+                      <Link to={`/instruments/${item.id}`}>
+                        <IconLabel icon={icons.eye}>View</IconLabel>
+                      </Link>
                     </Button>
                     <Button
                       type="button"
                       size="sm"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => startEditInstrument(item)}
                     >
-                      Edit
+                      <IconLabel icon={icons.pen}>Edit</IconLabel>
                     </Button>
                     <Button
                       type="button"
                       size="sm"
                       variant="outline"
+                      className={withIcon}
                       onClick={() => void onDeleteInstrument(item.id)}
                     >
-                      Delete
+                      <IconLabel icon={icons.trash}>Delete</IconLabel>
                     </Button>
                   </div>
                 </div>

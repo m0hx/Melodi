@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { deleteJson, getJson, instrumentImageUrl, postJson, putImage } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -254,8 +255,10 @@ export function InstrumentDetailPage() {
           <CardDescription>{error ?? 'Not found.'}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild variant="outline">
-            <Link to="/instruments">Back to catalog</Link>
+          <Button asChild variant="outline" className={withIcon}>
+            <Link to="/instruments">
+              <IconLabel icon={icons.arrowLeft}>Back to catalog</IconLabel>
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -299,19 +302,25 @@ export function InstrumentDetailPage() {
             <Button
               type="button"
               variant="outline"
+              className={withIcon}
               disabled={uploadingImage}
               onClick={() => imageInputRef.current?.click()}
             >
-              {uploadingImage ? 'Uploading…' : instrument.imageName ? 'Change image' : 'Upload image'}
+              <IconLabel icon={icons.image}>
+                {uploadingImage ? 'Uploading…' : instrument.imageName ? 'Change image' : 'Upload image'}
+              </IconLabel>
             </Button>
             {instrument.imageName ? (
               <Button
                 type="button"
                 variant="outline"
+                className={withIcon}
                 disabled={removingImage}
                 onClick={() => void onRemoveInstrumentImage()}
               >
-                {removingImage ? 'Removing…' : 'Remove image'}
+                <IconLabel icon={icons.trash}>
+                  {removingImage ? 'Removing…' : 'Remove image'}
+                </IconLabel>
               </Button>
             ) : null}
             {imageMsg ? <p className="w-full text-sm text-muted-foreground">{imageMsg}</p> : null}
@@ -319,10 +328,12 @@ export function InstrumentDetailPage() {
         </Card>
       ) : null}
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="page-intro flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
-          <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
-            <Link to="/instruments">← Back to catalog</Link>
+          <Button variant="ghost" size="sm" asChild className={`-ml-2 w-fit ${withIcon}`}>
+            <Link to="/instruments">
+              <IconLabel icon={icons.arrowLeft}>Back to catalog</IconLabel>
+            </Link>
           </Button>
           <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
             {instrument.name}
@@ -333,7 +344,7 @@ export function InstrumentDetailPage() {
             {instrument.condition ? ` · ${instrument.condition}` : ''}
           </p>
         </div>
-        <div className="ui-surface rounded-xl border border-border/60 px-4 py-3 text-sm">
+        <div className="ui-surface shrink-0 px-4 py-3 text-sm">
           <p className="font-medium text-foreground">Buy {formatMoney(instrument.purchasePrice)}</p>
           <p className="text-muted-foreground">
             Rent {formatMoney(instrument.rentalPricePerDay)}/day
@@ -358,9 +369,9 @@ export function InstrumentDetailPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {!token ? (
-              <Button asChild>
+              <Button asChild className={withIcon}>
                 <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
-                  Sign in to add to cart
+                  <IconLabel icon={icons.signIn}>Sign in to add to cart</IconLabel>
                 </Link>
               </Button>
             ) : !cartAllowed ? (
@@ -434,11 +445,15 @@ export function InstrumentDetailPage() {
                   </p>
                 ) : null}
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" disabled={addingCart} onClick={() => void addToCart()}>
-                    {addingCart ? 'Adding…' : 'Add to cart'}
+                  <Button type="button" className={withIcon} disabled={addingCart} onClick={() => void addToCart()}>
+                    <IconLabel icon={icons.cartPlus}>
+                      {addingCart ? 'Adding…' : 'Add to cart'}
+                    </IconLabel>
                   </Button>
-                  <Button variant="outline" asChild>
-                    <Link to="/cart">Go to cart</Link>
+                  <Button variant="outline" asChild className={withIcon}>
+                    <Link to="/cart">
+                      <IconLabel icon={icons.cart}>Go to cart</IconLabel>
+                    </Link>
                   </Button>
                 </div>
               </>
@@ -458,9 +473,9 @@ export function InstrumentDetailPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {!token ? (
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className={withIcon}>
                 <Link to="/signin" state={{ from: `/instruments/${instrumentId}` }}>
-                  Sign in to save
+                  <IconLabel icon={icons.signIn}>Sign in to save</IconLabel>
                 </Link>
               </Button>
             ) : (
@@ -482,13 +497,18 @@ export function InstrumentDetailPage() {
                   <Button
                     type="button"
                     variant="outline"
+                    className={withIcon}
                     disabled={addingWishlist}
                     onClick={() => void addToWishlist()}
                   >
-                    {addingWishlist ? 'Saving…' : 'Save to wishlist'}
+                    <IconLabel icon={icons.heart}>
+                      {addingWishlist ? 'Saving…' : 'Save to wishlist'}
+                    </IconLabel>
                   </Button>
-                  <Button variant="ghost" asChild>
-                    <Link to="/wishlist">Go to wishlist</Link>
+                  <Button variant="ghost" asChild className={withIcon}>
+                    <Link to="/wishlist">
+                      <IconLabel icon={icons.heart}>Go to wishlist</IconLabel>
+                    </Link>
                   </Button>
                 </div>
               </>

@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { postJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -61,8 +62,10 @@ export function ResetPasswordPage() {
           <CardDescription>Request a new password reset email.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild>
-            <Link to="/forgot-password">Forgot password</Link>
+          <Button asChild className={withIcon}>
+            <Link to="/forgot-password">
+              <IconLabel icon={icons.key}>Forgot password</IconLabel>
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -79,13 +82,15 @@ export function ResetPasswordPage() {
         {message ? (
           <div className="space-y-4">
             <p
-              className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground"
+              className="ui-notice"
               role="status"
             >
               {message}
             </p>
-            <Button className="w-full" asChild>
-              <Link to="/signin">Sign in</Link>
+            <Button className={`w-full ${withIcon}`} asChild>
+              <Link to="/signin">
+                <IconLabel icon={icons.signIn}>Sign in</IconLabel>
+              </Link>
             </Button>
           </div>
         ) : (
@@ -117,8 +122,10 @@ export function ResetPasswordPage() {
                 {error}
               </p>
             ) : null}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Updating…' : 'Update password'}
+            <Button type="submit" className={`w-full ${withIcon}`} disabled={loading}>
+              <IconLabel icon={icons.key}>
+                {loading ? 'Updating…' : 'Update password'}
+              </IconLabel>
             </Button>
           </form>
         )}

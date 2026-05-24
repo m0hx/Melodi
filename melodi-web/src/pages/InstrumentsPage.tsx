@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson, instrumentImageUrl } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -75,7 +76,7 @@ export function InstrumentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="page-intro flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
             Browse
@@ -94,7 +95,7 @@ export function InstrumentsPage() {
           </label>
           <select
             id="category-filter"
-            className="h-9 w-full rounded-md border border-border/70 bg-background px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-56"
+            className="h-9 w-full rounded-md border border-border/80 bg-card px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-56"
             value={selectedCategoryId === 'all' ? 'all' : String(selectedCategoryId)}
             onChange={(e) => {
               const v = e.target.value
@@ -118,8 +119,10 @@ export function InstrumentsPage() {
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button asChild variant="outline">
-              <Link to="/">Back home</Link>
+            <Button asChild variant="outline" className={withIcon}>
+              <Link to="/">
+                <IconLabel icon={icons.home}>Back home</IconLabel>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -174,8 +177,10 @@ export function InstrumentsPage() {
                     {item.description}
                   </p>
                 ) : null}
-                <Button className="w-full" asChild>
-                  <Link to={`/instruments/${item.id}`}>View details</Link>
+                <Button className={`w-full ${withIcon}`} asChild>
+                  <Link to={`/instruments/${item.id}`}>
+                    <IconLabel icon={icons.eye}>View details</IconLabel>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

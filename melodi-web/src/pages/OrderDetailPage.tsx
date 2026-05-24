@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { getJson, postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -117,8 +118,10 @@ export function OrderDetailPage() {
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" asChild>
-            <Link to="/orders">Back to orders</Link>
+          <Button variant="outline" asChild className={withIcon}>
+            <Link to="/orders">
+              <IconLabel icon={icons.arrowLeft}>Back to orders</IconLabel>
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -131,13 +134,15 @@ export function OrderDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
-        <Link to="/orders">← Back to orders</Link>
+      <Button variant="ghost" size="sm" asChild className={`-ml-2 w-fit ${withIcon}`}>
+        <Link to="/orders">
+          <IconLabel icon={icons.arrowLeft}>Back to orders</IconLabel>
+        </Link>
       </Button>
 
       {flash ? (
         <p
-          className="rounded-lg border border-border/60 bg-muted/40 px-4 py-3 text-sm text-foreground"
+          className="ui-notice"
           role="status"
         >
           {flash}
@@ -150,7 +155,7 @@ export function OrderDetailPage() {
         </p>
       ) : null}
 
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">{order.orderNumber}</h1>
         <p className="text-sm text-muted-foreground">
           {formatDate(order.createdAt)} · {order.orderType} · {order.status}
@@ -200,13 +205,15 @@ export function OrderDetailPage() {
       <div className="flex flex-wrap gap-2">
         {order.status === 'PENDING_PAYMENT' ? (
           <>
-            <Button asChild>
+            <Button asChild className={withIcon}>
               <Link to="/checkout" state={{ orderId: order.id }}>
-                Pay now
+                <IconLabel icon={icons.creditCard}>Pay now</IconLabel>
               </Link>
             </Button>
-            <Button variant="outline" disabled={cancelling} onClick={() => void cancelOrder()}>
-              {cancelling ? 'Cancelling…' : 'Cancel order'}
+            <Button variant="outline" className={withIcon} disabled={cancelling} onClick={() => void cancelOrder()}>
+              <IconLabel icon={icons.xmark}>
+                {cancelling ? 'Cancelling…' : 'Cancel order'}
+              </IconLabel>
             </Button>
           </>
         ) : null}
