@@ -34,7 +34,7 @@ public class DefaultEmailService implements EmailService {
 
 			helper.setTo(email.getTo());
 			helper.setSubject(email.getSubject());
-			helper.setFrom(fromEmail);
+			helper.setFrom(fromEmail, "Melodi Instruments");
 			helper.setText(emailContent, true);
 
 			emailSender.send(message);
