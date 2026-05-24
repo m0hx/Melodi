@@ -962,6 +962,9 @@ public class DataSeeder {
 				instrument.setRentalPricePerDay(rentalPrice);
 				instrument.setCondition(s.condition());
 				instrument.setStatus(s.status());
+				if (InstrumentSeedImages.applyIfMissing(instrument)) {
+					System.out.println("  + image: " + instrument.getName());
+				}
 				instrumentRepository.save(instrument);
 				continue;
 			}
@@ -977,10 +980,17 @@ public class DataSeeder {
 			instrument.setRentalStock(rentalStock);
 			instrument.setCondition(s.condition());
 			instrument.setStatus(s.status());
+			if (InstrumentSeedImages.applyIfMissing(instrument)) {
+				System.out.println("  + image: " + instrument.getName());
+			}
 			instrumentRepository.save(instrument);
 		}
 
-		System.out.println("✓ Catalog seed check complete (" + instrumentRepository.count() + " instruments in database).");
+		long withImages = instrumentRepository.findAll().stream()
+				.filter(i -> i.getImageData() != null && i.getImageData().length > 0)
+				.count();
+		System.out.println("✓ Catalog seed check complete (" + instrumentRepository.count()
+				+ " instruments, " + withImages + " with demo images).");
 	}
 
 }
