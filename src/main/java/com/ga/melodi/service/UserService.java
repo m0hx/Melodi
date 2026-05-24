@@ -2,6 +2,7 @@ package com.ga.melodi.service;
 
 import com.ga.melodi.exception.InformationExistException;
 import com.ga.melodi.mailing.AbstractEmailContext;
+import com.ga.melodi.mailing.AccountPasswordChangedEmailContext;
 import com.ga.melodi.mailing.AccountPasswordResetEmailContext;
 import com.ga.melodi.mailing.AccountVerificationEmailContext;
 import com.ga.melodi.mailing.EmailService;
@@ -143,6 +144,7 @@ public class UserService {
 		user.setPasswordHash(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
 		secureTokenService.removeToken(secureToken);
+		sendPasswordChangedEmail(user);
 		return new LoginResponse("Password reset successfully. You can log in now.");
 	}
 
@@ -159,7 +161,15 @@ public class UserService {
 		}
 		user.setPasswordHash(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
+		sendPasswordChangedEmail(user);
 		return new LoginResponse("Password changed successfully");
+	}
+
+	private void sendPasswordChangedEmail(User user) {
+		AccountPasswordChangedEmailContext context = new AccountPasswordChangedEmailContext();
+		context.init(user);
+		context.buildSignInUrl(frontendBaseUrl);
+		sendMailSafe(context, "password changed", context.getContext().get("signInURL"));
 	}
 
 	private void sendPasswordResetEmail(User user) {
@@ -181,22 +191,23 @@ public class UserService {
 		}
 		SecureToken secureToken = secureTokenService.findByToken(token.trim());
 		if (secureToken == null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired token");
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST, "This link is invalid or was already used.");
 		}
 		if (secureToken.getExpireAt() == null || secureToken.getExpireAt().isBefore(Instant.now())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired token");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This link has expired.");
 		}
 		return secureToken;
 	}
 
 	private void sendMailSafe(AbstractEmailContext context, String kind, Object fallbackUrl) {
-		System.out.println("✓ " + kind + " link (Postman Verify Email or browser):");
-		System.out.println("  " + fallbackUrl);
 		try {
 			emailService.sendMail(context);
-			System.out.println("  Email sent to " + context.getTo());
 		} catch (Exception e) {
-			System.out.println("  Email failed — use link above. Reason: " + e.getMessage());
+			System.out.println("Email (" + kind + ") failed for " + context.getTo() + ": " + e.getMessage());
+			if (fallbackUrl != null) {
+				System.out.println("Fallback link: " + fallbackUrl);
+			}
 		}
 	}
 

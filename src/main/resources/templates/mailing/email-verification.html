@@ -4,12 +4,19 @@
     <meta charset="utf-8">
     <title>Melodi — verify email</title>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-<h2>Welcome to Melodi Instruments</h2>
-<p>Hi <span th:text="${fullName}">there</span>,</p>
-<p>Please confirm your account:</p>
-<p><a th:href="${verificationURL}" style="background:#2563eb;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px;">Verify email</a></p>
-<p>Or copy this link:</p>
-<p th:text="${verificationURL}"></p>
+<body style="margin:0;padding:24px;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif;color:#fafafa;line-height:1.6;">
+<div style="max-width:520px;margin:0 auto;background:#141414;border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:28px;">
+    <p style="margin:0 0 4px 0;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;color:#a3a3a3;">Melodi Instruments</p>
+    <h2 style="margin:0 0 16px 0;font-size:22px;font-weight:600;color:#fafafa;">Verify your email</h2>
+    <p style="margin:0 0 12px 0;color:#d4d4d4;">Hi <span th:text="${fullName}">there</span>,</p>
+    <p style="margin:0 0 20px 0;color:#d4d4d4;">Thanks for signing up. Confirm your email to activate your account.</p>
+    <p style="margin:0 0 20px 0;">
+        <a th:href="${verificationURL}" style="display:inline-block;background:#fafafa;color:#0a0a0a;text-decoration:none;font-weight:600;padding:12px 18px;border-radius:8px;">Verify email</a>
+    </p>
+    <p style="margin:0 0 8px 0;font-size:13px;color:#a3a3a3;">Or copy this link:</p>
+    <p style="margin:0;word-break:break-all;font-size:12px;">
+        <a th:href="${verificationURL}" th:text="${verificationURL}" style="color:#fafafa;">link</a>
+    </p>
+</div>
 </body>
 </html>
