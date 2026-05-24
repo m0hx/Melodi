@@ -6,7 +6,7 @@
 <p align="center">Music Instruments Shop</p>
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=iO9lZi0Tevw">
+  <a href="https://www.youtube.com/watch?v=iO9lZi0Tevw" target="_blank" rel="noopener noreferrer">
     <img src="https://i.ytimg.com/vi/iO9lZi0Tevw/maxresdefault.jpg" alt="Demo video" width="640" />
   </a>
 </p>
