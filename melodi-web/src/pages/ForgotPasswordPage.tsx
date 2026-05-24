@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { postJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -50,13 +51,15 @@ export function ForgotPasswordPage() {
         {message ? (
           <div className="space-y-4">
             <p
-              className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground"
+              className="ui-notice"
               role="status"
             >
               {message}
             </p>
-            <Button className="w-full" asChild>
-              <Link to="/signin">Back to sign in</Link>
+            <Button className={`w-full ${withIcon}`} asChild>
+              <Link to="/signin">
+                <IconLabel icon={icons.signIn}>Back to sign in</IconLabel>
+              </Link>
             </Button>
           </div>
         ) : (
@@ -77,8 +80,10 @@ export function ForgotPasswordPage() {
                 {error}
               </p>
             ) : null}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Sending…' : 'Send reset link'}
+            <Button type="submit" className={`w-full ${withIcon}`} disabled={loading}>
+              <IconLabel icon={icons.key}>
+                {loading ? 'Sending…' : 'Send reset link'}
+              </IconLabel>
             </Button>
           </form>
         )}

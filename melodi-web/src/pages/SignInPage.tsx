@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getJson, postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -79,7 +80,7 @@ export function SignInPage() {
         <form className="space-y-4" onSubmit={onSubmit}>
           {info ? (
             <p
-              className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground"
+              className="ui-notice"
               role="status"
             >
               {info}
@@ -122,8 +123,8 @@ export function SignInPage() {
               {error}
             </p>
           ) : null}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Signing in…' : 'Sign in'}
+          <Button type="submit" className={`w-full ${withIcon}`} disabled={loading}>
+            <IconLabel icon={icons.signIn}>{loading ? 'Signing in…' : 'Sign in'}</IconLabel>
           </Button>
         </form>
       </CardContent>

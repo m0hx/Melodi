@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -61,7 +62,7 @@ export function OrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">My orders</h1>
         <p className="text-sm text-muted-foreground">Track purchases and rentals.</p>
       </div>
@@ -102,13 +103,15 @@ export function OrdersPage() {
                 {order.trackingId ? (
                   <p className="text-xs text-muted-foreground">Tracking: {order.trackingId}</p>
                 ) : null}
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/orders/${order.id}`}>View details</Link>
+                <Button size="sm" variant="outline" asChild className={withIcon}>
+                  <Link to={`/orders/${order.id}`}>
+                    <IconLabel icon={icons.eye}>View details</IconLabel>
+                  </Link>
                 </Button>
                 {order.status === 'PENDING_PAYMENT' ? (
-                  <Button size="sm" asChild>
+                  <Button size="sm" asChild className={withIcon}>
                     <Link to="/checkout" state={{ orderId: order.id }}>
-                      Pay now
+                      <IconLabel icon={icons.creditCard}>Pay now</IconLabel>
                     </Link>
                   </Button>
                 ) : null}

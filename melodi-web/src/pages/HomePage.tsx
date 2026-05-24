@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { getJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -41,10 +42,7 @@ export function HomePage() {
   return (
     <div className="space-y-10">
       {flash ? (
-        <p
-          className="rounded-lg border border-border/60 bg-muted/40 px-4 py-3 text-sm text-foreground"
-          role="status"
-        >
+        <p className="ui-notice" role="status">
           {flash}
         </p>
       ) : null}
@@ -61,22 +59,30 @@ export function HomePage() {
         </p>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Button asChild>
-            <Link to="/instruments">Browse instruments</Link>
+          <Button asChild className={withIcon}>
+            <Link to="/instruments">
+              <IconLabel icon={icons.guitar}>Browse instruments</IconLabel>
+            </Link>
           </Button>
           {token ? (
             isAdmin ? (
-              <Button variant="outline" asChild>
-                <Link to="/admin">Admin panel</Link>
+              <Button variant="outline" asChild className={withIcon}>
+                <Link to="/admin">
+                  <IconLabel icon={icons.shield}>Admin panel</IconLabel>
+                </Link>
               </Button>
             ) : (
-              <Button variant="outline" asChild>
-                <Link to="/orders">My orders</Link>
+              <Button variant="outline" asChild className={withIcon}>
+                <Link to="/orders">
+                  <IconLabel icon={icons.receipt}>My orders</IconLabel>
+                </Link>
               </Button>
             )
           ) : (
-            <Button variant="outline" asChild>
-              <Link to="/signup">Create account</Link>
+            <Button variant="outline" asChild className={withIcon}>
+              <Link to="/signup">
+                <IconLabel icon={icons.signUp}>Create account</IconLabel>
+              </Link>
             </Button>
           )}
         </div>
@@ -85,7 +91,11 @@ export function HomePage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card className="ui-surface">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base">Buy</CardTitle>
+            <CardTitle className={`text-base ${withIcon}`}>
+              <IconLabel icon={icons.bag} className="size-4 text-primary">
+                Buy
+              </IconLabel>
+            </CardTitle>
             <CardDescription>Purchase instruments with secure checkout.</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
@@ -95,7 +105,11 @@ export function HomePage() {
 
         <Card className="ui-surface">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base">Rent</CardTitle>
+            <CardTitle className={`text-base ${withIcon}`}>
+              <IconLabel icon={icons.calendar} className="size-4 text-primary">
+                Rent
+              </IconLabel>
+            </CardTitle>
             <CardDescription>Short-term rentals with return tracking.</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
@@ -105,7 +119,11 @@ export function HomePage() {
 
         <Card className="ui-surface">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base">Reviews</CardTitle>
+            <CardTitle className={`text-base ${withIcon}`}>
+              <IconLabel icon={icons.star} className="size-4 text-primary">
+                Reviews
+              </IconLabel>
+            </CardTitle>
             <CardDescription>Share feedback after a confirmed order.</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">

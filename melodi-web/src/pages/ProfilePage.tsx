@@ -2,6 +2,7 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { deleteJson, getJson, patchJson, profileImageUrl, putImage, putJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -159,7 +160,7 @@ export function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">Profile</h1>
         <p className="text-sm text-muted-foreground">
           {email}
@@ -205,19 +206,25 @@ export function ProfilePage() {
               <Button
                 type="button"
                 variant="outline"
+                className={withIcon}
                 disabled={uploadingImage}
                 onClick={() => fileInputRef.current?.click()}
               >
-                {uploadingImage ? 'Uploading…' : imageName ? 'Change photo' : 'Upload photo'}
+                <IconLabel icon={icons.image}>
+                  {uploadingImage ? 'Uploading…' : imageName ? 'Change photo' : 'Upload photo'}
+                </IconLabel>
               </Button>
               {imageName ? (
                 <Button
                   type="button"
                   variant="outline"
+                  className={withIcon}
                   disabled={removingImage}
                   onClick={() => void onRemoveImage()}
                 >
-                  {removingImage ? 'Removing…' : 'Remove photo'}
+                  <IconLabel icon={icons.trash}>
+                    {removingImage ? 'Removing…' : 'Remove photo'}
+                  </IconLabel>
                 </Button>
               ) : null}
             </div>
@@ -267,8 +274,8 @@ export function ProfilePage() {
                 {profileMsg}
               </p>
             ) : null}
-            <Button type="submit" disabled={saving}>
-              {saving ? 'Saving…' : 'Save profile'}
+            <Button type="submit" disabled={saving} className={withIcon}>
+              <IconLabel icon={icons.save}>{saving ? 'Saving…' : 'Save profile'}</IconLabel>
             </Button>
           </form>
         </CardContent>
@@ -305,8 +312,10 @@ export function ProfilePage() {
                 {pwMsg}
               </p>
             ) : null}
-            <Button type="submit" disabled={changingPw}>
-              {changingPw ? 'Updating…' : 'Change password'}
+            <Button type="submit" disabled={changingPw} className={withIcon}>
+              <IconLabel icon={icons.key}>
+                {changingPw ? 'Updating…' : 'Change password'}
+              </IconLabel>
             </Button>
           </form>
         </CardContent>

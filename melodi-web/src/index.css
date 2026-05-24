@@ -99,12 +99,14 @@
   }
   html {
     @apply font-sans antialiased;
+    min-height: 100%;
   }
   html.dark {
     color-scheme: dark;
   }
   body {
     @apply bg-background text-foreground;
+    min-height: 100%;
   }
   a[data-slot="button"] {
     text-decoration: none;
@@ -116,8 +118,35 @@
 }
 
 @layer components {
+  .melodi-app-shell {
+    position: relative;
+    isolation: isolate;
+    min-height: 100svh;
+  }
+  .melodi-app-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--mi-bg);
+    background-image:
+      linear-gradient(rgb(0 0 0 / 0.5), rgb(10 10 10)),
+      url("/background.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
   .ui-surface {
-    @apply border-border/70 bg-card/90 shadow-lg shadow-black/40 backdrop-blur-sm;
+    @apply rounded-xl border border-border/80 bg-card shadow-lg shadow-black/50;
+    background-color: var(--mi-surface);
+  }
+  .page-intro {
+    @apply rounded-xl border border-border/80 bg-card px-5 py-4 shadow-lg shadow-black/45 md:px-6;
+    background-color: var(--mi-surface);
+  }
+  .ui-notice {
+    @apply rounded-lg border border-border/80 bg-card px-4 py-3 text-sm text-foreground shadow-md shadow-black/40;
+    background-color: var(--mi-raised);
   }
   .piano-hero {
     background-image: repeating-linear-gradient(

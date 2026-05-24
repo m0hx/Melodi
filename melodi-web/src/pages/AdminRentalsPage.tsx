@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getJson, postJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -80,11 +81,13 @@ export function AdminRentalsPage() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
-        <Link to="/admin">← Back to admin</Link>
+      <Button variant="ghost" size="sm" asChild className={`-ml-2 w-fit ${withIcon}`}>
+        <Link to="/admin">
+          <IconLabel icon={icons.arrowLeft}>Back to admin</IconLabel>
+        </Link>
       </Button>
 
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">All rentals</h1>
         <p className="text-sm text-muted-foreground">Customer rentals across the shop.</p>
       </div>
@@ -118,16 +121,21 @@ export function AdminRentalsPage() {
                 </div>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/instruments/${rental.instrument.id}`}>View instrument</Link>
+                <Button size="sm" variant="outline" asChild className={withIcon}>
+                  <Link to={`/instruments/${rental.instrument.id}`}>
+                    <IconLabel icon={icons.eye}>View instrument</IconLabel>
+                  </Link>
                 </Button>
                 {canReturn(rental.status) ? (
                   <Button
                     size="sm"
+                    className={withIcon}
                     disabled={busyId === rental.id}
                     onClick={() => void returnRental(rental.id)}
                   >
-                    {busyId === rental.id ? 'Returning…' : 'Mark returned'}
+                    <IconLabel icon={icons.return}>
+                      {busyId === rental.id ? 'Returning…' : 'Mark returned'}
+                    </IconLabel>
                   </Button>
                 ) : null}
               </CardContent>

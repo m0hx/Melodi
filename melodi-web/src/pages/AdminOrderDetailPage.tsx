@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -97,8 +98,10 @@ export function AdminOrderDetailPage() {
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" asChild>
-            <Link to="/admin/orders">Back to all orders</Link>
+          <Button variant="outline" asChild className={withIcon}>
+            <Link to="/admin/orders">
+              <IconLabel icon={icons.arrowLeft}>Back to all orders</IconLabel>
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -111,11 +114,13 @@ export function AdminOrderDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
-        <Link to="/admin/orders">← Back to all orders</Link>
+      <Button variant="ghost" size="sm" asChild className={`-ml-2 w-fit ${withIcon}`}>
+        <Link to="/admin/orders">
+          <IconLabel icon={icons.arrowLeft}>Back to all orders</IconLabel>
+        </Link>
       </Button>
 
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">{order.orderNumber}</h1>
         <p className="text-sm text-muted-foreground">
           {formatDate(order.createdAt)} · {order.orderType} · {order.status}

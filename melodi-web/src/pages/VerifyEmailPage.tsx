@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { getJson } from '../api/client.ts'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -65,17 +66,21 @@ export function VerifyEmailPage() {
             <p className="text-sm text-destructive" role="alert">
               {error}
             </p>
-            <Button variant="outline" asChild>
-              <Link to="/signup">Back to sign up</Link>
+            <Button variant="outline" asChild className={withIcon}>
+              <Link to="/signup">
+                <IconLabel icon={icons.signUp}>Back to sign up</IconLabel>
+              </Link>
             </Button>
           </>
         ) : (
           <>
-            <p className="rounded-lg border border-border/60 bg-muted/40 px-3 py-3 text-sm text-foreground" role="status">
+            <p className="ui-notice" role="status">
               {message}
             </p>
-            <Button className="w-full" asChild>
-              <Link to="/signin">Sign in</Link>
+            <Button className={`w-full ${withIcon}`} asChild>
+              <Link to="/signin">
+                <IconLabel icon={icons.signIn}>Sign in</IconLabel>
+              </Link>
             </Button>
           </>
         )}

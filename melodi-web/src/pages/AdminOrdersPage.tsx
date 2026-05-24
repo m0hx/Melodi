@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getJson } from '../api/client.ts'
 import { useAuth } from '../auth/AuthContext.tsx'
 import { Button } from '@/components/ui/button'
+import { IconLabel, icons, withIcon } from '@/components/icons.tsx'
 import {
   Card,
   CardContent,
@@ -62,11 +63,13 @@ export function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
-        <Link to="/admin">← Back to admin</Link>
+      <Button variant="ghost" size="sm" asChild className={`-ml-2 w-fit ${withIcon}`}>
+        <Link to="/admin">
+          <IconLabel icon={icons.arrowLeft}>Back to admin</IconLabel>
+        </Link>
       </Button>
 
-      <div className="space-y-1">
+      <div className="page-intro space-y-1">
         <h1 className="font-heading text-3xl font-semibold tracking-tight">All orders</h1>
         <p className="text-sm text-muted-foreground">Customer orders across the shop.</p>
       </div>
@@ -105,8 +108,10 @@ export function AdminOrdersPage() {
                 {order.trackingId ? (
                   <p className="text-xs text-muted-foreground">Tracking: {order.trackingId}</p>
                 ) : null}
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/admin/orders/${order.id}`}>View details</Link>
+                <Button size="sm" variant="outline" asChild className={withIcon}>
+                  <Link to={`/admin/orders/${order.id}`}>
+                    <IconLabel icon={icons.eye}>View details</IconLabel>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
