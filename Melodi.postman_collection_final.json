@@ -1,0 +1,2033 @@
+{
+  "info": {
+    "_postman_id": "524e1553-626e-4691-a0f9-443ae1454c8f",
+    "name": "Melodi",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51449775"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"m0hx@protonmail.com\",\r\n  \"password\": \"test123\",\r\n  \"name\": \"m0hx\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/users/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "users",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"admin@melodi.local\",\r\n  \"password\": \"admin123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/users/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "users",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/auth/users/register/verify?token=C9_QCifP1WUJZNCF",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "users",
+                "register",
+                "verify"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "C9_QCifP1WUJZNCF"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request Password Reset",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"emailAddress\": \"m0hx@protonmail.com\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/users/resetPassword",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "users",
+                "resetPassword"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activate Password Reset",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"password\": \"newpass123\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/users/resetPassword?token=DTYQpX1OGabPhVze",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "users",
+                "resetPassword"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "DTYQpX1OGabPhVze"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtMGh4QHByb3Rvbm1haWwuY29tIiwiaWF0IjoxNzc5NDI3MjYyLCJleHAiOjE3Nzk1MTM2NjJ9.E2DvMIMbLxGM_wf6MN8an5ee-sdIhdJJ3OnfWzECtmNsJHm0__uoPr77sDK3cPnQ3gqjyH7D2_BDBxc1WCT_9A",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"currentPassword\": \"newpass123\", \r\n    \"newPassword\": \"test123\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/users/change-password",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "users",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Profile Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTU2NjY4NywiZXhwIjoxNzc5NjUzMDg3fQ.e_gyY7YWjpEemQE5LekHapp5HAY4_-QI7bvt_Hfz_4RQpG3AnZzEWMqPsAbd3kTc0YUvAnzCbX5wPZjfTCAzgg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMjk5OTEsImV4cCI6MTc3OTMxNjM5MX0.iUdJU3J9QJgdcpUGglSuWRvVf_dYLTwSs83jC3fqXvqVhjyalRQXnQtIFgr5D4ECmhr2vr6ux3sCtZwiPsPCaQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Melodi Admin\",\r\n  \"phone\": 33009714,\r\n  \"address\": \"Manama BLK 202, STR 303, House 2504\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Profile Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTU2NjY4NywiZXhwIjoxNzc5NjUzMDg3fQ.e_gyY7YWjpEemQE5LekHapp5HAY4_-QI7bvt_Hfz_4RQpG3AnZzEWMqPsAbd3kTc0YUvAnzCbX5wPZjfTCAzgg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "457268bc-6b36-4671-94e0-603aa8aebfd8",
+                  "src": "/C:/Users/M0HX/Pictures/Avatars/775905236271235093.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/profile/2/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "profile",
+                "2",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/profile/2/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "profile",
+                "2",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Profile Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTU2NjY4NywiZXhwIjoxNzc5NjUzMDg3fQ.e_gyY7YWjpEemQE5LekHapp5HAY4_-QI7bvt_Hfz_4RQpG3AnZzEWMqPsAbd3kTc0YUvAnzCbX5wPZjfTCAzgg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/profile/2/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "profile",
+                "2",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxMDgxNTIsImV4cCI6MTc3OTE5NDU1Mn0.2Pfn4zFWM6aBNi8E29ETs6IR6zrU0Dm6gORnEbgTIZTCHvIHql9NDMgHsCEDSqqUzOCe36NO52kt1UQ1P1UPag",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Guitars\",\r\n  \"description\": \"String instruments\",\r\n  \"imagePath\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/categories/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxMDgxNTIsImV4cCI6MTc3OTE5NDU1Mn0.2Pfn4zFWM6aBNi8E29ETs6IR6zrU0Dm6gORnEbgTIZTCHvIHql9NDMgHsCEDSqqUzOCe36NO52kt1UQ1P1UPag",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Guitars\",\r\n  \"description\": \"Updated\",\r\n  \"imagePath\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/categories/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxMDgxNTIsImV4cCI6MTc3OTE5NDU1Mn0.2Pfn4zFWM6aBNi8E29ETs6IR6zrU0Dm6gORnEbgTIZTCHvIHql9NDMgHsCEDSqqUzOCe36NO52kt1UQ1P1UPag",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/categories/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Brands",
+      "item": [
+        {
+          "name": "Create Brand",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxMDg3MjksImV4cCI6MTc3OTE5NTEyOX0.JrbOls7g5pYmfXVrUonhiLV9XkT9bCsDAG-SicoqwhjFt77XojAx0l07OHsq1ts5ztHswuvmXZxYQSlbktIVJA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Yamaha\",\r\n  \"country\": \"Japan\",\r\n  \"description\": \"Instruments and audio\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/brands",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "brands"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Brands",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/brands",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "brands"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Brand by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/brands/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "brands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Brand",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxMDg3MjksImV4cCI6MTc3OTE5NTEyOX0.JrbOls7g5pYmfXVrUonhiLV9XkT9bCsDAG-SicoqwhjFt77XojAx0l07OHsq1ts5ztHswuvmXZxYQSlbktIVJA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Yamaha\",\r\n  \"country\": \"Japan\",\r\n  \"description\": \"Updated\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/brands/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "brands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Brand",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/brands/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "brands",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Instruments",
+      "item": [
+        {
+          "name": "Create Instrument",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxODQ3MjAsImV4cCI6MTc3OTI3MTEyMH0.bhES7UkAByl6XMb5Ezh4DGU1v2NmB5pFeJYSyqNfONUOO2ofqnuIUX0YG1rVoEUT6AZ7PUgKwzX3LSEehLZMDQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Yamaha FG800\",\r\n  \"description\": \"Acoustic guitar\",\r\n  \"category\": {\r\n    \"id\": 1\r\n  },\r\n  \"brand\": {\r\n    \"id\": 1\r\n  },\r\n  \"purchasePrice\": 199.99,\r\n  \"rentalPricePerDay\": 15,\r\n  \"purchaseStock\": 5,\r\n  \"rentalStock\": 3,\r\n  \"condition\": \"NEW\",\r\n  \"status\": \"AVAILABLE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/instruments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Instruments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instrument by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instrument by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments?categoryId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instrument by Brand",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments?brandId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "brandId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instrument by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments?status=AVAILABLE",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "AVAILABLE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Instrument",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxODQ3MjAsImV4cCI6MTc3OTI3MTEyMH0.bhES7UkAByl6XMb5Ezh4DGU1v2NmB5pFeJYSyqNfONUOO2ofqnuIUX0YG1rVoEUT6AZ7PUgKwzX3LSEehLZMDQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Yamaha FG800\",\r\n  \"description\": \"Updated\",\r\n  \"category\": {\r\n    \"id\": 1\r\n  },\r\n  \"brand\": {\r\n    \"id\": 1\r\n  },\r\n  \"purchasePrice\": 189.99,\r\n  \"rentalPricePerDay\": 12,\r\n  \"purchaseStock\": 4,\r\n  \"rentalStock\": 2,\r\n  \"condition\": \"NEW\",\r\n  \"status\": \"AVAILABLE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Instrument",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkxODQ3MjAsImV4cCI6MTc3OTI3MTEyMH0.bhES7UkAByl6XMb5Ezh4DGU1v2NmB5pFeJYSyqNfONUOO2ofqnuIUX0YG1rVoEUT6AZ7PUgKwzX3LSEehLZMDQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Instrument Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NjY5NDAsImV4cCI6MTc3OTY1MzM0MH0.BhnhJ3rYwg0sU8hLykdQ3HLXVI6MaBUiZC6YXtk8oUAh2aA05gEn4NdZuj6u9_61foQr9B5OcrQGKX5zH3yOqA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "41da5609-47b6-4709-a7ff-8e2ec2635c2f",
+                  "src": "/C:/Users/M0HX/Pictures/Avatars/avril.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/1/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "1",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instrument Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/1/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "1",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Instrument Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NjY5NDAsImV4cCI6MTc3OTY1MzM0MH0.BhnhJ3rYwg0sU8hLykdQ3HLXVI6MaBUiZC6YXtk8oUAh2aA05gEn4NdZuj6u9_61foQr9B5OcrQGKX5zH3yOqA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/1/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "1",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Add To Cart (Buy)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTUzMTIzMCwiZXhwIjoxNzc5NjE3NjMwfQ.I1FqZpgrpTdB9_3IBgleDwxyZpWHc8nNsmUl5zQicGxSipe6oHenTvjwIf2bhbzpCETrmubzDb3JMbF7zZUD9Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"instrumentId\": 2,\r\n  \"mode\": \"BUY\",\r\n  \"quantity\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/cart/items",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add To Cart (Rent)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NDM1MSwiZXhwIjoxNzc5NTQwNzUxfQ.zj_bzS18ferKDOffJiqdFJSOjx9KT1r0soPS0VMpKMK85WgrTr-njF7la0HLzFffRbwQl82W171ZxK1s5mqMvg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"instrumentId\": 2,\r\n  \"mode\": \"RENT\",\r\n  \"quantity\": 1,\r\n  \"rentalStartDate\": \"2026-06-01T00:00:00Z\",\r\n  \"rentalEndDate\": \"2026-06-05T00:00:00Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/cart/items",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List My Cart",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NDM1MSwiZXhwIjoxNzc5NTQwNzUxfQ.zj_bzS18ferKDOffJiqdFJSOjx9KT1r0soPS0VMpKMK85WgrTr-njF7la0HLzFffRbwQl82W171ZxK1s5mqMvg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/cart",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item (Buy)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMzEzNTYsImV4cCI6MTc3OTMxNzc1Nn0.HJr3AvbAz1FEoTIkG5qvANTL9SOM3yUPNHm-lTFOGMIYYkdH9YmZ3_t2BIzwHUGTFPlgIKTExxf4-ks9Cq0kjg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"quantity\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/cart/items/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart (Rent)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMzEzNTYsImV4cCI6MTc3OTMxNzc1Nn0.HJr3AvbAz1FEoTIkG5qvANTL9SOM3yUPNHm-lTFOGMIYYkdH9YmZ3_t2BIzwHUGTFPlgIKTExxf4-ks9Cq0kjg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"quantity\": 2,\r\n  \"rentalStartDate\": \"2026-06-01T00:00:00Z\",\r\n  \"rentalEndDate\": \"2026-06-10T00:00:00Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/cart/items/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Cart Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMzEzNTYsImV4cCI6MTc3OTMxNzc1Nn0.HJr3AvbAz1FEoTIkG5qvANTL9SOM3yUPNHm-lTFOGMIYYkdH9YmZ3_t2BIzwHUGTFPlgIKTExxf4-ks9Cq0kjg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/cart/items/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NDM1MSwiZXhwIjoxNzc5NTQwNzUxfQ.zj_bzS18ferKDOffJiqdFJSOjx9KT1r0soPS0VMpKMK85WgrTr-njF7la0HLzFffRbwQl82W171ZxK1s5mqMvg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/cart",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Wishlist",
+      "item": [
+        {
+          "name": "Add To Wishlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMzEzNTYsImV4cCI6MTc3OTMxNzc1Nn0.HJr3AvbAz1FEoTIkG5qvANTL9SOM3yUPNHm-lTFOGMIYYkdH9YmZ3_t2BIzwHUGTFPlgIKTExxf4-ks9Cq0kjg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"instrumentId\": 7\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/wishlist/items",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "wishlist",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Wishlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMzEzNTYsImV4cCI6MTc3OTMxNzc1Nn0.HJr3AvbAz1FEoTIkG5qvANTL9SOM3yUPNHm-lTFOGMIYYkdH9YmZ3_t2BIzwHUGTFPlgIKTExxf4-ks9Cq0kjg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/wishlist",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "wishlist"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove From Wishlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3NzkyMzEzNTYsImV4cCI6MTc3OTMxNzc1Nn0.HJr3AvbAz1FEoTIkG5qvANTL9SOM3yUPNHm-lTFOGMIYYkdH9YmZ3_t2BIzwHUGTFPlgIKTExxf4-ks9Cq0kjg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/wishlist/items/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "wishlist",
+                "items",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Checkout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTUzMTIzMCwiZXhwIjoxNzc5NjE3NjMwfQ.I1FqZpgrpTdB9_3IBgleDwxyZpWHc8nNsmUl5zQicGxSipe6oHenTvjwIf2bhbzpCETrmubzDb3JMbF7zZUD9Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/orders/checkout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "orders",
+                "checkout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Payment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTUzMTIzMCwiZXhwIjoxNzc5NjE3NjMwfQ.I1FqZpgrpTdB9_3IBgleDwxyZpWHc8nNsmUl5zQicGxSipe6oHenTvjwIf2bhbzpCETrmubzDb3JMbF7zZUD9Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"paymentMethod\": \"SIMULATED_CARD\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/orders/1/confirm-payment",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "orders",
+                "1",
+                "confirm-payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Orders",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk0MTAzOTUsImV4cCI6MTc3OTQ5Njc5NX0.A7y40JGny_G2q6cSCL26_-LSnO5EqtZHixLARchoP94sUW1d95vycUV-ve0y3Gu3poZrJHPgDsMbc6--DS4aaA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NTU5MCwiZXhwIjoxNzc5NTQxOTkwfQ.-UFqCwWamlQnaRZRJ8imrOsQvEycylV-DIV8lsSsXe0-0KtuK6gJbMgJHt3rpHFhn2jbAvDMGYFGAjsKSRO9bQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/orders/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "orders",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Pending Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk0MTAzOTUsImV4cCI6MTc3OTQ5Njc5NX0.A7y40JGny_G2q6cSCL26_-LSnO5EqtZHixLARchoP94sUW1d95vycUV-ve0y3Gu3poZrJHPgDsMbc6--DS4aaA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/orders/1/cancel",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "orders",
+                "1",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rentals",
+      "item": [
+        {
+          "name": "Get My Rentals",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NDM1MSwiZXhwIjoxNzc5NTQwNzUxfQ.zj_bzS18ferKDOffJiqdFJSOjx9KT1r0soPS0VMpKMK85WgrTr-njF7la0HLzFffRbwQl82W171ZxK1s5mqMvg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/rentals",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Return Rental",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NDM1MSwiZXhwIjoxNzc5NTQwNzUxfQ.zj_bzS18ferKDOffJiqdFJSOjx9KT1r0soPS0VMpKMK85WgrTr-njF7la0HLzFffRbwQl82W171ZxK1s5mqMvg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/rentals/1/return",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "rentals",
+                "1",
+                "return"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTUzMTIzMCwiZXhwIjoxNzc5NjE3NjMwfQ.I1FqZpgrpTdB9_3IBgleDwxyZpWHc8nNsmUl5zQicGxSipe6oHenTvjwIf2bhbzpCETrmubzDb3JMbF7zZUD9Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderItemId\": 1,\r\n  \"rating\": 5,\r\n  \"title\": \"Great piano\",\r\n  \"body\": \"Perfect for practice at home.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/2/reviews",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "2",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instrument Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/instruments/2/reviews",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instruments",
+                "2",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NTU5MCwiZXhwIjoxNzc5NTQxOTkwfQ.-UFqCwWamlQnaRZRJ8imrOsQvEycylV-DIV8lsSsXe0-0KtuK6gJbMgJHt3rpHFhn2jbAvDMGYFGAjsKSRO9bQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rating\": 4,\r\n  \"title\": \"Updated title\",\r\n  \"body\": \"Still happy with it.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/reviews/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reviews",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZW1vQG1lbG9kaS5sb2NhbCIsImlhdCI6MTc3OTQ1NTU5MCwiZXhwIjoxNzc5NTQxOTkwfQ.-UFqCwWamlQnaRZRJ8imrOsQvEycylV-DIV8lsSsXe0-0KtuK6gJbMgJHt3rpHFhn2jbAvDMGYFGAjsKSRO9bQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reviews/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reviews",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/admin/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by ID (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/admin/orders/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "orders",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List All Rentals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/admin/rentals",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Return Rental (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/admin/rentals/1/return",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "rentals",
+                "1",
+                "return"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NzkyNDgsImV4cCI6MTc3OTY2NTY0OH0.Du9KwQMV-WFR-ReTr5KR3TwRnSDGbDS9HVzrLe5cJT7sLqCTqKk_fQKt1hEFKfcRN_y459xJL7zW9pim5gMIlw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/admin/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NzkyNDgsImV4cCI6MTc3OTY2NTY0OH0.Du9KwQMV-WFR-ReTr5KR3TwRnSDGbDS9HVzrLe5cJT7sLqCTqKk_fQKt1hEFKfcRN_y459xJL7zW9pim5gMIlw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/admin/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NzkyNDgsImV4cCI6MTc3OTY2NTY0OH0.Du9KwQMV-WFR-ReTr5KR3TwRnSDGbDS9HVzrLe5cJT7sLqCTqKk_fQKt1hEFKfcRN_y459xJL7zW9pim5gMIlw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Demo Shopper\",\r\n  \"phone\": \"33001234\",\r\n  \"address\": \"Manama\",\r\n  \"roleName\": \"USER\",\r\n  \"userStatus\": \"ACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/admin/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate User (Soft Delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NzkyNDgsImV4cCI6MTc3OTY2NTY0OH0.Du9KwQMV-WFR-ReTr5KR3TwRnSDGbDS9HVzrLe5cJT7sLqCTqKk_fQKt1hEFKfcRN_y459xJL7zW9pim5gMIlw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"userStatus\": \"INACTIVE\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/admin/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reactivate User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtZWxvZGkubG9jYWwiLCJpYXQiOjE3Nzk1NzkyNDgsImV4cCI6MTc3OTY2NTY0OH0.Du9KwQMV-WFR-ReTr5KR3TwRnSDGbDS9HVzrLe5cJT7sLqCTqKk_fQKt1hEFKfcRN_y459xJL7zW9pim5gMIlw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"userStatus\": \"ACTIVE\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/admin/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
